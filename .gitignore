@@ -1,0 +1,5 @@
+*~
+#~
+
+## Ignore build vignettes
+inst/doc/*

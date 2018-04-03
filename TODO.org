@@ -1,0 +1,11 @@
+* TODO input file format
+** Some geo-stuff
+* TODO how to get data into the app using the source.data function
+  Or a customized one.
+** TODO There is still text about importing in the documentation of climex()
+** TODO Names in sidebarDataType
+** TODO function.get.y.label
+** TODO deseasonalize.interactive
+** TODO sidebarDataBase
+** TODO sidebarLoading
+** TODO argument selectDataSource

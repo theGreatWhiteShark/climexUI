@@ -1,0 +1,47 @@
+Package: climexUI
+Type: Package
+Title: Shiny-based user interface to analyse large amounts of station data using the climex package.
+Version: 0.0.1
+Date: 2018-04-03
+LazyData: true
+Authors@R: person("Philipp Mueller", role = c("aut","cre"),
+    email = "thetruephil@googlemail.com")
+Maintainer: Philipp Mueller <thetruephil@googlemail.com>
+Description: A shiny-based user interface for the climex package is provided for both local and server-side application. Using a leaflet-based interactive map the user can select among a large number of different station data, view summary statistics about the individual stations, or color their positions according to the corresponding return levels to peek at the holistic picture of the extreme value analysis. In another tab all the different setting involving in both the fitting of the GEV or GP distribution and the preprocessing can be altered persistently.
+URL: https://github.com/theGreatWhiteShark/climexUI
+Depends:
+    R(>= 3.3.0),
+    climex,
+    xts
+Imports:
+    lubridate,
+    ggplot2,
+    pander,
+    grid,
+    Rcpp,
+    markdown,
+    dygraphs,
+    parallel,
+    shiny,
+    htmltools,
+    shinydashboard,
+    shinytoastr,
+    RCurl,
+    RColorBrewer,
+    deseasonalize,
+    Lmoments,
+    moments,
+    leaflet,
+    numDeriv,
+    alabama,
+    zoo
+Remotes: theGreatWhiteShark/leaflet,
+    theGreatWhiteShark/shinydashboard
+License: GPL (>= 3) | file LICENSE
+LinkingTo: Rcpp, RcppArmadillo
+VignetteBuilder: knitr
+RoxygenNote: 6.0.1
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat
