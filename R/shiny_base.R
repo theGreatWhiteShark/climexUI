@@ -1,82 +1,76 @@
 ##' @title The Climex app initialization
 ##' @description Shiny app combining most of the tools used in extreme
-##'   value analysis using GEV fitting via maximum likelihood.
+##'   value analysis using the generalized extreme value (GEV) or
+##'   generalized Pareto (GP) fitting via maximum likelihood.
 ##'
-##' @details It possible to provide a time series of type \pkg{xts} to
-##'   a list of elements of this type.
+##' @details This app needs its own css file. In order to assure its
+##'   correct behavior, the folder \emph{resource.directory} will be
+##'   generated to store all the necessary configuration scripts.
 ##'
-##'   This app need the its own css file.
-##'   This function will be exclusively called when the climex app is
-##'   run on localhost. In order to assure its correct behavior the
-##'   necessary file/folder structure in the climex.path (R option
-##'   which has to be set beforehand; "~/R/climex/" on default) will
-##'   be check and if necesary generated. The input time series is
-##'   accepted in three different formats
-##'   \enumerate{
-##'     \item As a single time series in the formatted using the
-##'           \pkg{xts} package 
-##'     \item As a named list of various xts time series 
-##'     \item As a list containing two elements;  a list of xts time
-##'           series and a data.frame with the columns
-##'           \emph{longitude}, \emph{latitude}, \emph{altitude},
-##'           \emph{name} corresponding to the stations
-##'           geo-coordinates, height and name  
-##'   }
-##'
+##' @param resource.directory Folder all the resources of the app,
+##'   like JavaScript scripts, images etc., will be copied in. If
+##'   NULL, the content will be copied in the directory contained in
+##'   the global \emph{climex.path} variable pointing at
+##'   \emph{~/R/climex/}. Note that the folder won't be removed
+##'   afterwards. Default: NULL.
+##' 
 ##' @family top-level
 ##'
-##' @return starts a shiny app.
+##' @return starts a shiny app
 ##' @export
 ##' @import climex
 ##' @import shiny
 ##' @import leaflet
 ##' @importFrom xts xts
 ##' @author Philipp Mueller 
-climex <- function(){
-  climex.path <- getOption( "climex.path" )
-  ## this is unfortunately necessary since some JavaScript scripts
+climex <- function( resource.directory = NULL ){
+  if ( is.null( resource.directory ) ){
+    resource.directory <- getOption( "climex.path" )
+  }
+  ## Creating a folder, which will contain all the resources necessary
+  ## to power the web app.
+  if ( !dir.exists( resource.directory ) ){
+    dir.create( resource.directory, recursive = TRUE )
+  }
+  ## This is, unfortunately, necessary since some JavaScript scripts
   ## are written out and some images are plotted which have to be
-  ## accessible within the shiny app.
-  ## If there are not the appropriate files present to run the shiny
-  ## app, the apps as well as the folder structure has to be generated
-  if ( !dir.exists( paste0( climex.path, "app" ) ) )
-    dir.create( paste0( climex.path, "app" ) )
-  if ( !dir.exists( paste0( climex.path, "app/www" ) ) )
-    dir.create( paste0( climex.path, "app/www" ) )
+  ## accessible within the shiny app.  If there are not the
+  ## appropriate files present to run the shiny app, the apps as well
+  ## as the folder structure has to be generated
+  if ( !dir.exists( paste0( resource.directory, "app" ) ) )
+    dir.create( paste0( resource.directory, "app" ) )
+  if ( !dir.exists( paste0( resource.directory, "app/www" ) ) )
+    dir.create( paste0( resource.directory, "app/www" ) )
   ## In order to display the animation the app needs the jquery
-  ## scianimator. Since it is not able to access a system file on
-  ## its own the wrapper climex() will copy it to the apps folder
-  if ( !dir.exists( paste0( climex.path,
+  ## scianimator. Since it is not able to access a system file on its
+  ## own the wrapper climex() will copy it to the apps folder
+  if ( !dir.exists( paste0( resource.directory,
                            "app/www/jquery.scianimator.min.js" ) ) ){
     file.copy( paste0( system.file( "climex_app",
-                                   package = "climex" ),
+                                   package = "climexUI" ),
                       "/js/jquery.scianimator.min.js" ),
-              to = paste0( climex.path,
+              to = paste0( resource.directory,
                           "app/www/jquery.scianimator.min.js" ),
               overwrite = TRUE )
   }
-  ## source of the gif: http://i.imgur.com/seuaOqf.gif
-  ## since this is a non-commercial product there shouldn't be
-  ## any problems http://imgur.com/tos
-  file.copy( paste0( system.file( "climex_app", package = "climex" ),
-                    "/js/loadingGif.js" ),
-            to = paste0( climex.path, "app/www/loadingGif.js" ),
-            overwrite = TRUE ) 
-  file.copy( paste0( system.file( "climex_app", package = "climex" ),
+  ## source of the gif: http://i.imgur.com/seuaOqf.gif since this is a
+  ## non-commercial product there shouldn't be any problems
+  ## http://imgur.com/tos
+  ## Get the newest copy of the script containing the loading GIF.
+  file.copy(
+      paste0( system.file( "climex_app", package = "climexUI" ),
+             "/js/loadingGif.js" ),
+      to = paste0( resource.directory, "app/www/loadingGif.js" ),
+      overwrite = TRUE ) 
+  file.copy( paste0( system.file( "climex_app",
+                                 package = "climexUI" ),
                     "/res/loading.gif" ),
-            to = paste0( climex.path, "app/www/loading.gif" ) )      
-  writeLines( "shinyUI( climex.ui() )", con = paste0( climex.path,
-                                                     "app/ui.R" ) )
+            to = paste0( resource.directory, "app/www/loading.gif" ) )
+  writeLines( "shinyUI( climex.ui() )",
+             con = paste0( resource.directory, "app/ui.R" ) )
   writeLines( "shinyServer( climex.server )",
-             con = paste0( climex.path, "app/server.R" ) )
-  ## If one or more time series without any map information are
-  ## provided as input arguments, start the app in the "General" tab
-  ## right away
-  ## if ( !is.null( x.input ) && length( x.input ) != 2 ){ 
-  ##   writeLines( "shinyUI( climex.ui( selected = 'General' ) )",
-  ##              con = paste0( climex.path, "app/ui.R" ) )
-  ## }
-  runApp( paste0( climex.path, "app" ) )
+             con = paste0( resource.directory, "app/server.R" ) )
+  runApp( paste0( resource.directory, "app" ) )
 }
 
 
@@ -117,60 +111,62 @@ climex.server <- function( input, output, session ){
   climex.environment <- new.env( parent = emptyenv() )
 
   ## Load the station data and assign it to the custom environment.
-  climex::source.data( pick.default = TRUE,
-                      envir = climex.environment )
+  ##! Bad, bad code.
+  load( "~/R/climex/dwd_default.RData" )
+  ## climex::source.data( envir = climex.environment )
   
-########################################################################
-######### Customizing the sidebar and launching its reactives ##########
-########################################################################
+######################################################################
+######### Customizing the sidebar and launching its reactives ########
+######################################################################
   ## Everything in my code is always of the style this.is.a.name. So
   ## why do I use the camel case thisIsAName for the shiny objects?
-  ## Well, since CSS file do not support the point separator.
-  ## Type of database (input, DWD, artificial data)
-  output$sidebarDataBase <- climex:::sidebarDataBase( session )
+  ## Well, since CSS file do not support the point separator. Type of
+  ## database (input, DWD, artificial data)
+  output$sidebarDataBase <- climexUI:::sidebarDataBase( session )
   ## Individual station or location (GEV)/scale(GP) for artificial
   ## data
   output$sidebarDataSource <-
-    climex:::sidebarDataSource( reactive( input$selectDataBase ),
+    climexUI:::sidebarDataSource( reactive( input$selectDataBase ),
                                reactive( input$radioEvdStatistics ),
                                reactive.chosen, selected.station )
   ## Measurement type or scale (GEV)/shape(GP) for artificial data
   output$sidebarDataType <-
-    climex:::sidebarDataType( reactive( input$selectDataBase ),
+    climexUI:::sidebarDataType( reactive( input$selectDataBase ),
                              reactive( input$radioEvdStatistics ) )
   ## File input prompt for "input" or shape for GEV artificial data
   output$sidebarLoading <-
-    climex:::sidebarLoading( session, reactive( input$selectDataBase ),
+    climexUI:::sidebarLoading( session,
+                            reactive( input$selectDataBase ),
                             reactive( input$radioEvdStatistics ) )
   ## Removing incomplete years (GEV) or clusters (GP)
   output$sidebarCleaning <-
-    climex:::sidebarCleaning( reactive( input$radioEvdStatistics ),
+    climexUI:::sidebarCleaning( reactive( input$radioEvdStatistics ),
                              reactive( input$selectDataBase ) )
   ## Slider for choosing the length of the artificial time series
   output$sidebarSeriesLength <-
-    climex:::sidebarSeriesLength( reactive( input$selectDataBase ) )
+    climexUI:::sidebarSeriesLength( reactive( input$selectDataBase ) )
   ## Introducing a dropdown menu for the deseasonalization in the
   ## Options box in the General tab.
   output$deseasonalizeSelection <-
-    climex:::deseasonalizeSelection(
+    climexUI:::deseasonalizeSelection(
                  reactive( input$selectDataBase ) )
   ## A radioButton to determine whether to calculate the minimal or
   ## maximal extremes
   output$generalButtonMinMax <-
-    climex:::generalButtonMinMax(
+    climexUI:::generalButtonMinMax(
                  reactive( input$radioEvdStatistics ),
                  reactive( input$selectDataType ) )
   ## Displaying a loading gif whenever the app is busy
-  callModule( climex:::sidebarLoadingGif, "busy" )
+  callModule( climexUI:::sidebarLoadingGif, "busy" )
   ## Display a link to the app's imprint whenever it is run using
   ## shiny-server
-  output$sidebarImprint <- climex:::sidebarImprint( session )
+  output$sidebarImprint <- climexUI:::sidebarImprint( session )
   ## Reactive value listening for file input
   reactive.loading <-
-    climex:::file.loading( reactive( input$fileInputSelection ) )
+    climexUI:::file.loading( reactive( input$fileInputSelection ) )
   ## Reactive value which holds the selected stations chosen either
   ## via the leaflet map or the sidebar
-  reactive.chosen <- climex:::data.chosen(
+  reactive.chosen <- climexUI:::data.chosen(
                                   reactive( input$selectDataBase ),
                                   reactive( input$sliderYears ),
                                   reactive( input$selectDataType ),
@@ -179,7 +175,7 @@ climex.server <- function( input, output, session ){
   ## Reactive value selecting a specific time series according to the
   ## choices in the sidebar/leaflet map
   reactive.selection <-
-    climex:::data.selection(
+    climexUI:::data.selection(
                  reactive.chosen, reactive( input$selectDataSource ),
                  reactive( input$selectDataBase ),
                  reactive( input$sliderThreshold ),
@@ -189,16 +185,16 @@ climex.server <- function( input, output, session ){
                  reactive( input$sliderArtificialDataShape ),
                  reactive( input$buttonDrawTS ),
                  reactive( input$sliderSeriesLength ) )
-#####################################################################
+######################################################################
   
-#####################################################################
-#################### Data preprocessing and fitting #################
-#####################################################################
+######################################################################
+#################### Data preprocessing and fitting ##################
+######################################################################
   ## Slider input determining the block length (GEV) or threshold (GP)
   output$generalExtremeExtraction <-
-    climex:::generalExtremeExtraction(
+    climexUI:::generalExtremeExtraction(
                  reactive( input$radioEvdStatistics ),
-                 climex:::deseasonalize.interactive,
+                 climexUI:::deseasonalize.interactive,
                  reactive( input$selectDeseasonalize ),
                  reactive( input$buttonMinMax ), reactive.selection,
                  reactive( input$selectDataBase ) )
@@ -206,26 +202,26 @@ climex.server <- function( input, output, session ){
   ## the deseasonalized and pure time series. In addition, it's also
   ## performing both the extraction and the deseasonalization
   reactive.extreme <-
-    climex:::data.extremes(
+    climexUI:::data.extremes(
                  reactive.selection,
                  reactive( input$radioEvdStatistics ),
                  reactive( input$sliderBlockLength ),
                  reactive( input$sliderThreshold ),
                  reactive( input$checkboxDecluster ),
-                 climex:::deseasonalize.interactive,
+                 climexUI:::deseasonalize.interactive,
                  reactive( input$selectDeseasonalize ),
                  reactive( input$selectDataBase ),
                  reactive( input$buttonMinMax ),
-                 climex:::extremes.interactive,
-                 climex:::cleaning.interactive,
+                 climexUI:::extremes.interactive,
+                 climexUI:::cleaning.interactive,
                  reactive( input$checkboxIncompleteYears ) )
   ## Reactive value performing the GEV/GP fit to the selected time
   ## series and providing the fitted object of class 'climex.fit.gev'
   ## or climex.fit.gpd'.
   reactive.fitting <-
-    climex:::data.fitting(
+    climexUI:::data.fitting(
                  reactive.extreme, reactive.rows,
-                 climex:::fit.interactive,
+                 climexUI:::fit.interactive,
                  reactive( input$radioEvdStatistics ),
                  reactive( input$buttonMinMax ),
                  reactive( input$sliderThreshold ),
@@ -241,21 +237,21 @@ climex.server <- function( input, output, session ){
   ## clicking and brushing in the extreme's ggplot2 plot. In addition
   ## the plotting and rendering of the extremes, deseasonalized and
   ## pure time series is done in here.
-  reactive.rows <- callModule( climex:::generalTimeSeriesPlot, "ts",
+  reactive.rows <- callModule( climexUI:::generalTimeSeriesPlot, "ts",
                               reactive.extreme,
                               reactive( input$selectDataBase ),
                               reactive( input$selectDataType ),
-                              climex:::function.get.y.label,
+                              climexUI:::function.get.y.label,
                               reactive( input$radioEvdStatistics ),
                               reactive( input$sliderThreshold ),
                               reactive( input$buttonMinMax ) )
   ## Plotting of the fitted distribution and the corresponding PP, QQ
   ## and return level goodness-of-fit plots.
-  callModule( climex:::generalFitPlot, "fit", reactive.extreme,
+  callModule( climexUI:::generalFitPlot, "fit", reactive.extreme,
              reactive.rows, reactive.fitting,
              reactive( input$buttonMinMax ),
              reactive( input$radioEvdStatistics ),
-             climex:::function.get.y.label,
+             climexUI:::function.get.y.label,
              reactive( input$selectDataBase ), 
              reactive( input$selectDataType ),
              reactive( input$sliderThreshold ) )
@@ -272,26 +268,26 @@ climex.server <- function( input, output, session ){
       climex.environment$last.2 <-
         climex.environment$last.3 <- rep( 0,  )
   output$generalFitStatistics <-
-    climex:::generalFitStatistics(
+    climexUI:::generalFitStatistics(
                  reactive.fitting, reactive.extreme,
                  reactive( input$sliderThreshold ),
                  reactive( input$buttonMinMax ),
                  reactive( input$radioEvdStatistics ),
-                 climex:::color.table, climex.environment )
+                 climexUI:::color.table, climex.environment )
 ######################################################################
   ## Module providing the leaflet map tab and returning a reactive
   ## value containing all stations with a length longer than the
   ## minimal length slider in the Leaflet tab.
   selected.station <- callModule(
-      climex:::leafletClimex, "leaflet", reactive.chosen,
+      climexUI:::leafletClimex, "leaflet", reactive.chosen,
       reactive( input$buttonMinMax ),
       reactive( input$radioEvdStatistics ),
       reactive( input$sliderYears ), reactive.extreme,
       reactive.fitting,
-      reactive( input$sliderThreshold ), climex:::fit.interactive,
-      climex:::cleaning.interactive,
-      climex:::deseasonalize.interactive,
-      climex:::extremes.interactive,
+      reactive( input$sliderThreshold ), climexUI:::fit.interactive,
+      climexUI:::cleaning.interactive,
+      climexUI:::deseasonalize.interactive,
+      climexUI:::extremes.interactive,
       reactive( input$selectDataSource ),
       reactive( input$checkboxIncompleteYears ),
       reactive( input$checkboxDecluster ),
@@ -355,34 +351,34 @@ climex.ui <- function( selected = c( "Map", "General" ) ){
                  icon = icon( "stats", lib = "glyphicon" ),
                  selected = ifelse( selected == "General",
                                    TRUE, FALSE ) ),
-        climex:::sidebarDataBaseInput(),
-        climex:::sidebarDataSourceInput(),
-        climex:::sidebarDataTypeInput(),
-        climex:::sidebarLoadingInput(),
-        climex:::sidebarSeriesLengthInput(),
-        climex:::sidebarCleaningInput(),
-        climex:::sidebarLoadingGifOutput( "busy" ),
-        climex:::sidebarImprintInput() ) ),
+        climexUI:::sidebarDataBaseInput(),
+        climexUI:::sidebarDataSourceInput(),
+        climexUI:::sidebarDataTypeInput(),
+        climexUI:::sidebarLoadingInput(),
+        climexUI:::sidebarSeriesLengthInput(),
+        climexUI:::sidebarCleaningInput(),
+        climexUI:::sidebarLoadingGifOutput( "busy" ),
+        climexUI:::sidebarImprintInput() ) ),
     body = dashboardBody(
       ## shinyjs::useShinyjs(),
         includeCSS( paste0(
-            system.file( "climex_app", package = "climex" ),
+            system.file( "climex_app", package = "climexUI" ),
             "/css/climex.css" ) ),
         includeCSS( paste0(
-            system.file( "climex_app", package = "climex" ),
+            system.file( "climex_app", package = "climexUI" ),
             "/css/reset.css" ) ),
         includeCSS( paste0(
-            system.file( "climex_app", package = "climex" ),
+            system.file( "climex_app", package = "climexUI" ),
             "/css/styles.css" ) ),
         includeCSS( paste0(
-            system.file( "climex_app", package = "climex" ),
+            system.file( "climex_app", package = "climexUI" ),
             "/css/scianimator.css" ) ),
       tabItems(
         tabItem(
           tabName = "tabMap",
           tags$style( type = "text/css",
                      "#leaflet-map {height: calc(100vh - 80px) !important;}" ),
-         climex:::leafletClimexUI( "leaflet" ) ),
+         climexUI:::leafletClimexUI( "leaflet" ) ),
         tabItem(
           tabName = "tabGeneral",
           ## In order guarantee the correct behavior of the rendering
@@ -391,7 +387,7 @@ climex.ui <- function( selected = c( "Map", "General" ) ){
           ## their ordering using CSS3 if the max-width is below a
           ## certain threshold
           fluidRow(
-            climex:::generalFitPlotOutput( "fit" ),
+            climexUI:::generalFitPlotOutput( "fit" ),
             box( title = h2( "Options" ), width = 4,
               height = 505, background = "orange",
               id = "boxGevStatistics",
@@ -400,10 +396,10 @@ climex.ui <- function( selected = c( "Map", "General" ) ){
                            inline = TRUE,
                            choices = c( "GEV", "GP" ),
                            selected = "GEV" ),
-              climex:::generalExtremeExtractionInput(),
-              climex:::generalButtonMinMaxInput(),
-              climex:::deseasonalizeSelectionInput() ) ),
+              climexUI:::generalExtremeExtractionInput(),
+              climexUI:::generalButtonMinMaxInput(),
+              climexUI:::deseasonalizeSelectionInput() ) ),
           fluidRow(
-              climex:::generalFitStatisticsTable(),
-              climex:::generalTimeSeriesPlotOutput( "ts" ) ) ) ) ) )
+              climexUI:::generalFitStatisticsTable(),
+              climexUI:::generalTimeSeriesPlotOutput( "ts" ) ) ) ) ) )
 }

@@ -606,7 +606,7 @@ file.loading <- function( fileInputSelection ){
           }
         }
       }
-      shinytoastr::toastr_error( "Sorry but this feature is implemented for the format in which the argument x.input is accepted in climex::climex only! Please do the conversion and formatting in R beforehand and just save a .RData containing a single object" )
+      shinytoastr::toastr_error( "Sorry but this feature is implemented for the format in which the argument x.input is accepted in climexUI::climex only! Please do the conversion and formatting in R beforehand and just save a .RData containing a single object" )
       return( NULL )
   } )
 }

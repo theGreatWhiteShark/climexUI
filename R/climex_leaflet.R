@@ -177,22 +177,22 @@ leafletClimex <- function( input, output, session, reactive.chosen,
   ## The selected one should be colored red and all the others blue. 
   blue.icon <-  makeIcon(
       iconUrl = paste0(
-          system.file( "climex_app", package = "climex" ),
+          system.file( "climex_app", package = "climexUI" ),
           "/www/marker-icon.png" ),
       iconWidth = 25, iconHeight = 41, iconAnchorX = 12.5,
       iconAnchorY = 41,
       shadowUrl = paste0( system.file( "climex_app",
-                                      package = "climex" ),
+                                      package = "climexUI" ),
                          "/www/marker-shadow.png" ), shadowWidth = 41,
       shadowHeight = 41, shadowAnchorX = 12.5, shadowAnchorY = 41 )
   red.icon <-  makeIcon(
       iconUrl = paste0(
-          system.file( "climex_app", package = "climex" ),
+          system.file( "climex_app", package = "climexUI" ),
           "/www/select-marker.png" ),
       iconWidth = 25, iconHeight = 41, iconAnchorX = 12.5,
       iconAnchorY = 41,
       shadowUrl = paste0( system.file( "climex_app",
-                                      package = "climex" ),
+                                      package = "climexUI" ),
                          "/www/marker-shadow.png" ), shadowWidth = 41,
       shadowHeight = 41, shadowAnchorX = 12.5, shadowAnchorY = 41 )
   
