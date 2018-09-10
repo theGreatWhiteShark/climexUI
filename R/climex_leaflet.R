@@ -44,7 +44,7 @@ leafletClimexUI <- function( id ){
                     ## the width of this specific box via the
                     ## plotPlaceholder without seeing it at all.
                     plotOutput( ns( "placeholder" ),
-                               height = 0, width = '100%' ) ),
+                               height = 10, width = '100%' ) ),
       ## lift it a little but upwards so one can still see the
       ## card licensing
       absolutePanel( bottom = 32, right = 0,
@@ -339,60 +339,62 @@ leafletClimex <- function( input, output, session, reactive.chosen,
     ## and the only way to start the calculation will be using a
     ## button
     if ( is.null( input$buttonDrawMarkers ) ||
-         input$buttonDrawMarkers < 1 )
+         input$buttonDrawMarkers < 1 ){
       return( NULL )
-      isolate( data.return.levels <- calculate.chosen.return.levels() )
-      if ( !is.null( data.return.levels ) ){
-        if ( any( is.na( c( data.return.levels$longitude,
-                           data.return.levels$latitude ) ) ) ){
-          ## I am dealing with either a placeholder or a compromised
-          ## data.frame. Anyway, the leaflet map can not handle it
-          return( NULL )
-        }
-        ## Same trick as in the animation tab: I use a plot of height
-        ## 0 to obtain the current width of the element I want to
-        ## place the legend next to. Unfortunately I do not know of
-        ## any other trick right now to adjust an objects width
-        ## according to the current screen width (CSS3 magic)
-        isolate( 
-            map.width <-
-              session$clientData[[ 'output_leaflet-placeholder_width' ]]
-        )
-        if ( is.null( map.width ) )
-          warning(
-              "The placeholder magic in the leaflet tab went wrong!" )
-        ## range of the return levels
-        color.max <- max( data.return.levels$return.level )
-        color.min <- min( data.return.levels$return.level )
-        ## create a palette for the return levels of the individual
-        ## circles
-        palette <- colorNumeric( c( "navy", "skyblue", "limegreen",
-                                   "yellow", "darkorange",
-                                   "firebrick4" ),
-                                c( color.min, color.max ) )
-        map.leaflet <- leafletProxy( session$ns( "map" ) )
-        map.leaflet <- clearGroup( map.leaflet, "returns" )
-        map.leaflet <- addCircleMarkers(
-            map.leaflet, data = data.return.levels,
-            group = "returns", lng = ~longitude,
-            color = ~palette( return.level ), lat = ~latitude,
-            options = popupOptions( closeButton = FALSE ),
-            fillOpacity = .8 )
-        ## layer control to turn the return level layer on and off
-        map.leaflet <- addLayersControl(
-            map.leaflet, position = "bottomright",
-            baseGroups = c( "OpenTopoMaps", "OpenStreetMaps" ),
-            overlayGroups = c( "stations", "returns" ),
-            options = layersControlOptions( collapsed = FALSE ) )
-        map.leaflet <- addLegend(
-            map.leaflet, pal = palette, layerId = "leafletLegend",
-            values = c( color.min, color.max ),
-            orientation = "horizontal", width = map.width )
-        return( map.leaflet )
-      } } )
+    }
+    isolate( data.return.levels <- calculate.chosen.return.levels() )
+    if ( !is.null( data.return.levels ) ){
+      if ( any( is.na( c( data.return.levels$longitude,
+                         data.return.levels$latitude ) ) ) ){
+        ## I am dealing with either a placeholder or a compromised
+        ## data.frame. Anyway, the leaflet map can not handle it
+        return( NULL )
+      }
+      ## Same trick as in the animation tab: I use a plot of height
+      ## 0 to obtain the current width of the element I want to
+      ## place the legend next to. Unfortunately I do not know of
+      ## any other trick right now to adjust an objects width
+      ## according to the current screen width (CSS3 magic)
+      isolate( 
+          map.width <-
+            session$clientData[[ 'output_leaflet-placeholder_width' ]]
+      )
+      if ( is.null( map.width ) ){
+        warning(
+            "The placeholder magic in the leaflet tab went wrong!" )
+      }
+      ## range of the return levels
+      color.max <- max( data.return.levels$return.level )
+      color.min <- min( data.return.levels$return.level )
+      ## create a palette for the return levels of the individual
+      ## circles
+      palette <- colorNumeric( c( "navy", "skyblue", "limegreen",
+                                 "yellow", "darkorange",
+                                 "firebrick4" ),
+                              c( color.min, color.max ) )
+      map.leaflet <- leafletProxy( session$ns( "map" ) )
+      map.leaflet <- clearGroup( map.leaflet, "returns" )
+      map.leaflet <- addCircleMarkers(
+          map.leaflet, data = data.return.levels,
+          group = "returns", lng = ~longitude,
+          color = ~palette( return.level ), lat = ~latitude,
+          options = popupOptions( closeButton = FALSE ),
+          fillOpacity = .8 )
+      ## layer control to turn the return level layer on and off
+      map.leaflet <- addLayersControl(
+          map.leaflet, position = "bottomright",
+          baseGroups = c( "OpenTopoMaps", "OpenStreetMaps" ),
+          overlayGroups = c( "stations", "returns" ),
+          options = layersControlOptions( collapsed = FALSE ) )
+      map.leaflet <- addLegend(
+          map.leaflet, pal = palette, layerId = "leafletLegend",
+          values = c( color.min, color.max ),
+          orientation = "horizontal", width = map.width )
+      return( map.leaflet )
+    } } )
   ## Placeholder to determine the window's width
-  output$placeholder <- renderPlot( {
-    ttplot( climex.environment$stations.temp.max[[ 1 ]] ) } )
+ output$placeholder <- renderPlot( {
+    ttplot( climex.environment$stations.temp.max[[ 2 ]] ) } )
   ## This chunk both updates/renders the table containing the summary
   ## statistics of an individual station and adds a red icon for the
   ## selected station.
@@ -415,11 +417,11 @@ leafletClimex <- function( input, output, session, reactive.chosen,
     selected.station <- data.selected[[ 2 ]][
         which( data.selected[[ 2 ]]$name == station.name ), ]
     leafletProxy( session$ns( "map" ) ) %>%
-      clearGroup( group = "selected" )
+    clearGroup( group = "selected" )
     leafletProxy( session$ns( "map" ) ) %>%
-      addMarkers( data = selected.station, group = "selected",
-                 icon = red.icon, lng = ~longitude,
-                 lat = ~latitude )
+    addMarkers( data = selected.station, group = "selected",
+               icon = red.icon, lng = ~longitude,
+               lat = ~latitude )
     ## calculate the GEV/GP fit and various return levels
     x.fit.evd <- reactive.fitting()
     x.data <- reactive.extreme()
@@ -565,23 +567,24 @@ data.chosen <- function( selectDataBase, sliderYears, selectDataType,
     if ( sliderYears() < 20 ){
       ## Display a warning and return for a slider value lesser than 20.
       shinytoastr::toastr_info( "There are loads of data in the database and we are done extreme value analysis. Please select longer time series!",
-                                  preventDuplicates = TRUE )
+                               preventDuplicates = TRUE )
       return( NULL )
     }
-    ## if ( selectDataBase() == "DWD" ){
-    ##   if ( is.null( selectDataType() ) )
-    ##     return( NULL )
-    ##   selection.list <-
-    ##     switch( selectDataType(),
-    ##            "Daily max. temp." =
-    ##              climex.environment$stations.temp.max,
-    ##            "Daily min. temp." =
-    ##              climex.environment$stations.temp.min,
-    ##            "Daily precipitation" =
-    ##              climex.environment$stations.prec )
-    ##   ## to also cope the possibility of importing such position data
-    ##   positions.all <- climex.environment$station.positions
-    ## } else if ( selectDataBase() == "Input" ){
+    if ( selectDataBase() == "DWD" ){
+      if ( is.null( selectDataType() ) ){
+        return( NULL )
+      }
+      selection.list <-
+        switch( selectDataType(),
+               "Daily max. temp." =
+                 climex.environment$stations.temp.max,
+               "Daily min. temp." =
+                 climex.environment$stations.temp.min,
+               "Daily precipitation" =
+                 climex.environment$stations.prec )
+      ## to also cope the possibility of importing such position data
+      positions.all <- climex.environment$station.positions
+    } else if ( selectDataBase() == "Input" ){
       x.input <- reactive.loading()
       if ( is.null( x.input ) ){
         return( NULL )
@@ -621,7 +624,7 @@ data.chosen <- function( selectDataBase, sliderYears, selectDataType,
               name = names( selection.list ) )
         }
       }
-    ## }
+    }
     ## select time series with sufficient length 
     selection <- Reduce( c, lapply( selection.list, function( x )
       length( unique( lubridate::year( x ) ) ) ) ) >= sliderYears()

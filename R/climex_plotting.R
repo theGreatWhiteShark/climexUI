@@ -568,10 +568,10 @@ generalFitPlot <- function( input, output, session, reactive.extreme,
       theoretical <- Reduce(
           c, lapply( stats::ppoints( length( x.kept ), 0 ),
                     function( ss )
-                      qevd( ss, location = x.fit.evd$par[ 1 ],
-                           scale = x.fit.evd$par[ 2 ],
-                           shape = x.fit.evd$par[ 3 ],
-                           model = "gev" ) ) )
+                      climex:::qevd( ss, location = x.fit.evd$par[ 1 ],
+                                    scale = x.fit.evd$par[ 2 ],
+                                    shape = x.fit.evd$par[ 3 ],
+                                    model = "gev" ) ) )
       if ( !is.null( buttonMinMax() ) && buttonMinMax() == "Min" ){
         theoretical <- -1* theoretical
         empirical <- -1* sort( as.numeric( x.kept ) )
@@ -590,11 +590,11 @@ generalFitPlot <- function( input, output, session, reactive.extreme,
       theoretical <- Reduce(
           c, lapply( stats::ppoints( length( x.kept ), 0 ),
                     function( ss )
-                      qevd( ss, threshold = threshold,
-                           scale = x.fit.evd$par[ 1 ],
-                           shape = x.fit.evd$par[ 2 ],
-                           model = "gpd",
-                           lower.tail = FALSE ) ) )
+                      climex:::qevd( ss, threshold = threshold,
+                                    scale = x.fit.evd$par[ 1 ],
+                                    shape = x.fit.evd$par[ 2 ],
+                                    model = "gpd",
+                                    lower.tail = FALSE ) ) )
       empirical <- sort( as.numeric( x.kept ) + threshold )
     }
     ## Writing the data in a format used by ggplot2

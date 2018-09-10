@@ -43,12 +43,12 @@ sidebarDataBase <- function( session ){
     if ( session$clientData$url_hostname == "localhost" ||
          session$clientData$url_hostname == "127.0.0.1" ){
       selectInput( "selectDataBase", "Data base",
-                  choices = c( "Input", "Artificial data" ),
-                  selected = "Input" )
+                  choices = c( "DWD", "Input", "Artificial data" ),
+                  selected = "DWD" )
     } else {
       selectInput( "selectDataBase", "Data base",
-                  choices = c( "Input", "Artificial data" ),
-                  selected = "Input" )
+                  choices = c( "DWD", "Artificial data" ),
+                  selected = "DWD" )
     }
   } )
 }

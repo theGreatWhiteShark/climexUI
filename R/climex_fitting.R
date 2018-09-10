@@ -286,6 +286,7 @@ generalFitStatistics <- function( reactive.fitting, reactive.extreme,
     x.fit.evd <- reactive.fitting()
     x.data <- reactive.extreme()
     x.extreme <- x.data[[ 1 ]]
+    browser()
     if ( radioEvdStatistics() == "GEV" ){
       ## Negating the location parameter for the minimal extremes
       if ( !is.null( buttonMinMax() ) && buttonMinMax() == "Min" ){

@@ -425,21 +425,22 @@ extremes.interactive <- function( x.xts, buttonMinMax,
   }    
   ## Toggle if maxima of minima are going to be used
   if ( is.null( buttonMinMax() ) || buttonMinMax() == "Max" ){
-    block.mode <- "max"
-  } else
-    block.mode <- "min"
+    extreme.type <- "max"
+  } else {
+    extreme.type <- "min"
+  }
   if ( is.null( radioEvdStatistics() ) ||
        ( radioEvdStatistics() == "GEV" &&
          is.null( sliderBlockLength() ) ) ){
     ## While initialization input$radioEvdStatistics and
     ## input$sliderBoxLength are NULL. Therefore this is the
     ## fallback default x.extreme
-    x.extreme <- climex::block( x.xts, separation.mode = "years",
-                               block.mode = block.mode )
+    x.extreme <- climex::block( x.xts, block.length = NULL,
+                               extreme.type = extreme.type )
   } else if ( radioEvdStatistics() == "GEV" ){
     x.extreme <- climex::block( x.xts,
                                block.length = sliderBlockLength(),
-                               block.mode = block.mode )
+                               extreme.type = extreme.type )
   } else if ( radioEvdStatistics() == "GP" ){
     ## Since the GP can only be set in the General tab, the
     ## input$sliderThreshold has to be initialized eventually. Just

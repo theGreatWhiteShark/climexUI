@@ -112,7 +112,7 @@ climex.server <- function( input, output, session ){
 
   ## Load the station data and assign it to the custom environment.
   ##! Bad, bad code.
-  load( "~/R/climex/dwd_default.RData" )
+  load( "~/R/climex/dwd_default.RData", envir = climex.environment )
   ## climex::source.data( envir = climex.environment )
   
 ######################################################################
