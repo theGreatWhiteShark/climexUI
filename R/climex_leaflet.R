@@ -44,7 +44,7 @@ leafletClimexUI <- function( id ){
                     ## the width of this specific box via the
                     ## plotPlaceholder without seeing it at all.
                     plotOutput( ns( "placeholder" ),
-                               height = 10, width = '100%' ) ),
+                               height = '1px', width = '100%' ) ),
       ## lift it a little but upwards so one can still see the
       ## card licensing
       absolutePanel( bottom = 32, right = 0,
@@ -355,10 +355,10 @@ leafletClimex <- function( input, output, session, reactive.chosen,
       ## place the legend next to. Unfortunately I do not know of
       ## any other trick right now to adjust an objects width
       ## according to the current screen width (CSS3 magic)
-      isolate( 
+      isolate({
           map.width <-
             session$clientData[[ 'output_leaflet-placeholder_width' ]]
-      )
+      })
       if ( is.null( map.width ) ){
         warning(
             "The placeholder magic in the leaflet tab went wrong!" )
@@ -393,8 +393,9 @@ leafletClimex <- function( input, output, session, reactive.chosen,
       return( map.leaflet )
     } } )
   ## Placeholder to determine the window's width
- output$placeholder <- renderPlot( {
-    ttplot( climex.environment$stations.temp.max[[ 2 ]] ) } )
+  ## output$placeholder <- renderPlot( {
+  ##    } )
+    ## ttplot( climex.environment$stations.temp.max[[ 2 ]] ) } )
   ## This chunk both updates/renders the table containing the summary
   ## statistics of an individual station and adds a red icon for the
   ## selected station.

@@ -341,6 +341,11 @@ table.table-bordered.dataTable {
   position: relative !important;
   left: 25% !important;
 }
+#leaflet-placeholder {
+  /* The exclusive purpose of this object is to access the width of
+     the current box. */
+  visibility: hidden !important;
+}
 
 /* display the MathJax text in the same font as everything else */
 #math-text {
