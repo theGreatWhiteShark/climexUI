@@ -23,7 +23,38 @@
 ##' @import leaflet
 ##' @importFrom xts xts
 ##' @author Philipp Mueller 
-climex <- function( resource.directory = NULL ){
+climex <- function( list.time.series = NULL,
+                   data.frame.positions = NULL,
+                   resource.directory = NULL ){
+  ## Checking the input
+  if ( !is.null( list.time.series ) &&
+       !is.null( data.frame.positions ) ){
+    input.checked <- climexUI:::check.input( list.time.series,
+                                            data.frame.positions )
+    if ( input.checked$check.result == FALSE ||
+         length( input.checked$list.time.series ) == 0 ||
+         nrow( input.checked$data.frame.positions ) == 0 ){
+      list.time.series <- NULL
+      data.frame.positions <- NULL
+    }
+  }
+  
+  ## Fallback of the position data.
+  if ( is.null( list.time.series ) ||
+       is.null( data.frame.positions ) ){
+    ## Both input arguments have to be supplied.
+    if ( !( is.null( list.time.series ) &&
+            is.null( data.frame.positions ) ) ){
+      warning(
+              "Both 'list.time.series' and 'data.frame.positions' have to be provided. The default series will be used instead!" )
+    }
+    data( "temp.potsdam", package = "climex" )
+    list.time.series <- list( Potsdam = temp.potsdam )
+    data.frame.positions <- data.frame(
+        name = "Potsdam", longitude = 13.0622,
+        latitude = 52.3813, altitude = 81 )
+  }
+  
   if ( is.null( resource.directory ) ){
     resource.directory <- getOption( "climex.path" )
   }
@@ -104,16 +135,15 @@ climex <- function( resource.directory = NULL ){
 ##' 
 ##' @author Philipp Mueller 
 climex.server <- function( input, output, session ){
+
+  ## Do we already see the fallback input?
+  browser()
+  
   ## Create a custom environment to host the variables `last.values`,
   ## `last.1`, `last.2`, and `last.3` in, as well as the station data
   ## in. By referring to this environment the corresponding variables
   ## do not have to be defined globally.
   climex.environment <- new.env( parent = emptyenv() )
-
-  ## Load the station data and assign it to the custom environment.
-  ##! Bad, bad code.
-  load( "~/R/climex/dwd_default.RData", envir = climex.environment )
-  ## climex::source.data( envir = climex.environment )
   
 ######################################################################
 ######### Customizing the sidebar and launching its reactives ########
