@@ -567,8 +567,8 @@ data.chosen <- function( selectDataBase, sliderYears,
     ## data.selection reactive function. To ensure everything will
     ## work nevertheless, some random data will be returned.
     if ( selectDataBase() == "Artificial data" ){
-      return( list( climex.envirnment$list.data.sources[[ 1 ]],
-                   climex.environment$data.frame.position ) )
+      return( NULL )## list( climex.environment$list.data.sources[[ 1 ]],
+                   ## climex.environment$data.frame.position ) )
     } else {
       selection.list <-
         climex.environment$list.data.sources[[

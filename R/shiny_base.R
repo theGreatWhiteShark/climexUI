@@ -226,8 +226,11 @@ climex.server <- function( input, output, session ){
                  reactive( input$sliderArtificialDataLocation ),
                  reactive( input$sliderArtificialDataScale ),
                  reactive( input$sliderArtificialDataShape ),
-                 reactive( input$buttonDrawTS ),
+                 reactive.redrawing,
                  reactive( input$sliderSeriesLength ) )
+  ## Reactive event redrawing an artificial data series whenever the
+  ## "draw" button in the sidebar is pressed.
+  reactive.redrawing <- eventReactive( input$buttonDrawTS, {} )
 ######################################################################
   
 ######################################################################

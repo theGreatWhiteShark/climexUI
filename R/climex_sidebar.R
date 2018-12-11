@@ -110,7 +110,8 @@ sidebarDataSource <- function( selectDataBase, radioEvdStatistics,
     ## a slider for the location parameter of the parent GEV
     ## distribution
     if ( is.null( selectDataBase() ) ||
-         is.null( reactive.chosen() ) ){
+         ( ( selectDataBase() != "Artificial data" ) &&
+           is.null( reactive.chosen() ) ) ){
       return( NULL )
     } else if ( selectDataBase() == "Artificial data" ){
       if ( is.null( radioEvdStatistics() ) ||
@@ -471,16 +472,17 @@ data.selection <- function( reactive.chosen, selectDataSource,
                            radioEvdStatistics,
                            sliderArtificialDataLocation,
                            sliderArtificialDataScale,
-                           sliderArtificialDataShape, buttonDrawTS,
-                           sliderSeriesLength ){
+                           sliderArtificialDataShape,
+                           reactive.redrawing, sliderSeriesLength ){
   reactive( {
     print( "* in data.selection" )
     ## Selecting the data out of a pool of different possibilities
     ## or generate them artificially
     data.selected <- reactive.chosen()
-    if ( is.null( data.selected ) ||
-         is.null( selectDataSource() ) ||
-         is.null( selectDataBase() ) ){
+    if ( ( is.null( selectDataSource() ) ||
+           is.null( selectDataBase() ) ) ||
+         ( is.null( data.selected ) &&
+           selectDataBase() != "Artificial data" ) ){
       print( "null in data.selection" )
       return( NULL )
     }
@@ -493,9 +495,7 @@ data.selection <- function( reactive.chosen, selectDataSource,
         return( NULL )
       }
       ## Redraw the time series using a button in the sidebar
-      if( !is.null( buttonDrawTS() ) ){
-        buttonDrawTS()
-      }
+      reactive.redrawing()
       ## To transform the artificial time series today's time
       ## stamp will be used and moved to 1900. All following
       ## points will be future years from this point on. This
@@ -515,13 +515,13 @@ data.selection <- function( reactive.chosen, selectDataSource,
         model <- "gpd"
       }
       x.xts <- xts(
-          revd( n = series.length,
-               location = sliderArtificialDataLocation(),
-               scale = sliderArtificialDataScale(),
-               shape = sliderArtificialDataShape(),
-               model = model, silent = TRUE,
-               threshold = 0 ),
-          order.by = dates )
+          climex::revd( n = series.length,
+                        location = sliderArtificialDataLocation(),
+                        scale = sliderArtificialDataScale(),
+                        shape = sliderArtificialDataShape(),
+                        model = model, silent = TRUE,
+                        threshold = 0 ),
+        order.by = dates )
     } else {
       ## There is a bug when switching from one data base into
       ## another: since the input$selectDataSource needs a
