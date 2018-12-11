@@ -89,7 +89,8 @@ fit.interactive <- function( x.kept, radioEvdStatistics, buttonMinMax,
   if ( model == "gev" ){
     ## Fits of GEV parameters to blocked data set
     x.fit.evd <- climex::fit.gev( x.kept, initial = x.initial,
-                                 error.estimation = "none" )
+                                 error.estimation = "none",
+                                 silent = TRUE )
   } else {
     ## Fits of GPD parameters to blocked data set
     if ( selectDataBase() == "Artificial data" ){
@@ -109,7 +110,8 @@ fit.interactive <- function( x.kept, radioEvdStatistics, buttonMinMax,
     ## suppress those warnings 
     x.fit.evd <- climex::fit.gpd( x.kept, initial = x.initial,
                                  threshold = threshold,
-                                 error.estimation = "none" )
+                                 error.estimation = "none",
+                                 silent = TRUE )
   }
   if ( !is.null( buttonMinMax() ) && buttonMinMax() == "Min" &&
        radioEvdStatistics() == "GEV" ){

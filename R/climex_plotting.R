@@ -1,54 +1,5 @@
 ### All functions and modules related to the plots in the General tab
 
-##' @title y plot labels in the Climex app
-##' @description Determines the propoper label of the y label of the
-##'   plots in the General tab of the Climex app.
-##' @details It's more or less just the input$selectDataType being
-##'   considered. For artificial data the label will be
-##'   "temperature".
-##' @param selectDataBase Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
-##' @param selectDataType Character (select) input to determine which
-##'   set of measurements should be used. This choice is important if
-##'   the input of the \code{\link{climex}} function was not just a
-##'   list of different station data, but a list of such lists. This
-##'   additional layer of lists can e.g. represent different types of
-##'   measurement data like precipitation and temperature. Their names
-##'   are derived from the names of the input list (see \code{link{
-##'   menuSelectDataType}}).
-##'
-##' @family climex-plot
-##' 
-##' @return Character
-##' @author Philipp Mueller 
-function.get.y.label <- function( selectDataBase, selectDataType ){
-    if ( is.null( selectDataBase() ) ){
-      y.label <- expression(
-          paste( "temperature in ", "", degree, "C" ) )            
-    } else if ( selectDataBase() == "Artificial data" ){
-      y.label <- "EVD sample"
-    } else if ( selectDataBase() == "DWD" ){
-      if ( is.null( selectDataType() ) ){
-        y.label <- expression(
-            paste( "temperature in ", "", degree, "C" ) ) 
-      } else if ( selectDataType() == "Daily precipitation" ){
-        y.label <- "precipitation in mm"
-      } else {
-        y.label <- expression(
-            paste( "temperature in ", "", degree, "C" ) )
-      }
-    } else if ( selectDataBase() == "Input" ){
-      y.label <- "Input"
-    }
-    return( y.label )
-}
-
 ##' @title Time series plot in the Climex app.
 ##' @description TabBox containing a plot of the pure and
 ##'   deseasonalized time series as well as one of all its extreme
@@ -125,12 +76,6 @@ generalTimeSeriesPlotOutput <- function( id ){
 ##'   measurement data like precipitation and temperature. Their names
 ##'   are derived from the names of the input list (see \code{link{
 ##'   menuSelectDataType}}).
-##' @param function.get.y.label Function determining the label of the
-##'   y axis in all three
-##'   plots. \code{\link{function.get.y.label}}. You might wonder why
-##'   I am not just referring to the package internal function right
-##'   away instead of requiring it as an input. Well, this way the
-##'   whole app becomes way more easy to customize.
 ##' @param radioEvdStatistics Character (radio) input determining
 ##'   whether the GEV or GP distribution shall be fitted to the
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
@@ -156,9 +101,8 @@ generalTimeSeriesPlotOutput <- function( id ){
 ##' @author Philipp Mueller 
 generalTimeSeriesPlot <- function( input, output, session,
                                   reactive.extreme, selectDataBase,
-                                  selectDataType, function.get.y.label,
-                                  radioEvdStatistics, sliderThreshold,
-                                  buttonMinMax ){
+                                  selectDataType, radioEvdStatistics,
+                                  sliderThreshold, buttonMinMax ){
   observe({
     if ( is.null( reactive.extreme() ) ){
       return( NULL )
@@ -226,7 +170,7 @@ generalTimeSeriesPlot <- function( input, output, session,
     plot.extremes <- x.data[[ 3 ]]
     plot.extremes[ !index( x.data[[ 3 ]] )
                   %in% index( x.extreme ) ] <- NA
-    y.label <- function.get.y.label( selectDataBase, selectDataType )
+    y.label <- selectDataBase()
     bind.dy <- cbind( x.data[[ 3 ]], plot.extremes )
     names( bind.dy ) <- c( "pure ts", "annual maxima" )
     if ( class( y.label ) == "expression" ){
@@ -251,7 +195,7 @@ generalTimeSeriesPlot <- function( input, output, session,
     plot.extremes <- x.data[[ 2 ]]
     plot.extremes[ !index( x.data[[ 2 ]] ) %in%
                   index( x.extreme ) ] <- NA
-    y.label <- function.get.y.label( selectDataBase, selectDataType )
+    y.label <- selectDataBase()
     bind.dy <- cbind( x.data[[ 2 ]], plot.extremes )
     names( bind.dy ) <- c( "deseasonalized ts", "annual maxima" )
     print( y.label )
@@ -286,7 +230,7 @@ generalTimeSeriesPlot <- function( input, output, session,
                             value = as.numeric( x.kept ) )
     plot.excluded <- data.frame( date = index( x.excluded ),
                                 value = as.numeric( x.excluded ) )
-    y.label <- function.get.y.label( selectDataBase, selectDataType )
+    y.label <- selectDataBase()
     ggplot() +
       geom_line( data = plot.kept, aes( x = date, y = value ),
                 colour = colour.ts ) +
@@ -357,12 +301,6 @@ generalFitPlotOutput <- function( id ){
 ##' @param radioEvdStatistics Character (radio) input determining
 ##'   whether the GEV or GP distribution shall be fitted to the
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
-##' @param function.get.y.label Function determining the label of the
-##'   y axis in all three
-##'   plots. \code{\link{function.get.y.label}}. You might wonder why
-##'   I am not just referring to the package internal function right
-##'   away instead of requiring it as an input. Well, this way the
-##'   whole app becomes way more easy to customize.
 ##' @param selectDataBase  Character (select) input to determine the
 ##'   data source. In the default installation there are two
 ##'   options: c( "Input", "Artificial data" ). The first one
@@ -396,8 +334,8 @@ generalFitPlotOutput <- function( id ){
 generalFitPlot <- function( input, output, session, reactive.extreme,
                            reactive.rows, reactive.fitting,
                            buttonMinMax, radioEvdStatistics,
-                           function.get.y.label, selectDataBase,
-                           selectDataType, sliderThreshold ){
+                           selectDataBase, selectDataType,
+                           sliderThreshold ){
   ## Wait for proper initialization
   observe( {
     if ( is.null( reactive.extreme() ) ||
@@ -438,7 +376,7 @@ generalFitPlot <- function( input, output, session, reactive.extreme,
     ## with the length of x.kept yields the number of blocks.
     gg1.bins <- ( ( ( length( x.kept ) - 1 )*100/
                     length( x.extreme ) )  %/% 5 )* 0.025
-    x.label <- function.get.y.label( selectDataBase, selectDataType )
+    x.label <- selectDataBase()
     gg.evd <- graphics::plot( x.fit.evd, bin.factor = gg1.bins ) +
       ylab( "density" ) +
       xlab( x.label ) + theme( legend.position = "none" ) +

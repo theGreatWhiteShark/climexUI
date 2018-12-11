@@ -1,4 +1,4 @@
-### Contains all modules associated with the leaflet map of the Climex
+## Contains all modules associated with the leaflet map of the Climex
 ### app.
 
 ##' @title Leaflet interface in Climex app
@@ -168,6 +168,7 @@ leafletClimex <- function( input, output, session, reactive.chosen,
                           checkboxIncompleteYears, checkboxDecluster,
                           selectDeseasonalize, sliderBlockLength,
                           selectDataBase, climex.environment ){
+  print( "* in leafletClimex" )
   ## This variable contains the name of the previously selected
   ## station. It's a little bit ugly since it's global, but right now
   ## I'm lacking an alternative.
@@ -466,7 +467,7 @@ leafletClimex <- function( input, output, session, reactive.chosen,
     data.selected <- reactive.chosen()
     if ( is.null( data.selected ) )
       return( NULL )
-    if ( !is.null( input$map_marker_click  ) ){
+    if ( !is.null( input$map_marker_click ) ){
       map.click <- input$map_marker_click
       station.name.click <- as.character(
           data.selected[[ 2 ]]$name[ which(
@@ -479,8 +480,8 @@ leafletClimex <- function( input, output, session, reactive.chosen,
     }
     station.name.sidebar <- selectDataSource()
     if ( is.null( station.name.click ) ){
-      station.name <- selectDataSource()
-      station.name.previous <<- selectDataSource()
+      station.name <- station.name.sidebar
+      station.name.previous <<- station.name.sidebar
     } else {
       ## Now there is both a station name provided via click and the
       ## sidebar. Using station.name.previous to decide which was
@@ -553,88 +554,48 @@ leafletClimex <- function( input, output, session, reactive.chosen,
 ##' @return Reactive list containing a list of all selected stations
 ##'   and their positions.
 ##' @author Philipp Mueller 
-data.chosen <- function( selectDataBase, sliderYears, selectDataType,
-                        reactive.loading, climex.environment ){
+data.chosen <- function( selectDataBase, sliderYears,
+                        selectDataSource, climex.environment ){
   data <- reactive( {
+    print( "* in data.chosen" )
     if ( is.null( selectDataBase() ) ||
-         is.null( sliderYears() ) )
+         is.null( sliderYears() ) ){
       return( NULL )
+    }
     ## The generation of the artificial data is handled in the
-    ## data.selection reactive function
+    ## data.selection reactive function. To ensure everything will
+    ## work nevertheless, some random data will be returned.
     if ( selectDataBase() == "Artificial data" ){
-      return( list( climex.environment$stations.temp.max,
-                   climex.environment$station.positions ) )
-    }
-    if ( sliderYears() < 20 ){
-      ## Display a warning and return for a slider value lesser than 20.
-      shinytoastr::toastr_info( "There are loads of data in the database and we are done extreme value analysis. Please select longer time series!",
-                               preventDuplicates = TRUE )
-      return( NULL )
-    }
-    if ( selectDataBase() == "DWD" ){
-      if ( is.null( selectDataType() ) ){
-        return( NULL )
-      }
+      return( list( climex.envirnment$list.data.sources[[ 1 ]],
+                   climex.environment$data.frame.position ) )
+    } else {
       selection.list <-
-        switch( selectDataType(),
-               "Daily max. temp." =
-                 climex.environment$stations.temp.max,
-               "Daily min. temp." =
-                 climex.environment$stations.temp.min,
-               "Daily precipitation" =
-                 climex.environment$stations.prec )
+        climex.environment$list.data.sources[[
+          which( names( climex.environment$list.data.sources )
+                %in% selectDataBase() ) ]]
       ## to also cope the possibility of importing such position data
-      positions.all <- climex.environment$station.positions
-    } else if ( selectDataBase() == "Input" ){
-      x.input <- reactive.loading()
-      if ( is.null( x.input ) ){
+      positions.all <- climex.environment$data.frame.positions
+ 
+      if ( sliderYears() < 20 ){
+        ## Display a warning and return for a slider value lesser than 20.
+        shinytoastr::toastr_info( "We are done extreme value analysis. Please select longer time series!",
+                                 preventDuplicates = TRUE )
         return( NULL )
       }
-      if ( any( class( x.input ) == "xts" ) ){
-        ## to assure compatibility
-        aux <- list( x.input,
-                    data.frame( longitude = NA, latitude = NA,
-                               altitude = NA, name = "1" ) )
-        names( aux[[ 1 ]] ) <- c( "1" )
-        ## adding a dummy name which is going to be displayed in
-        ## the sidebar
-        return( aux )
-      } else {
-        ## two cases are accepted here: a list containing stations xts
-        ## time series of contain such a list and a data.frame
-        ## specifying the stations positions
-        if ( class( x.input ) == "list" &&
-             class( x.input[[ 1 ]] ) == "list" ){
-          selection.list <- x.input[[ 1 ]]
-          ## I will assume the second element of this list is a
-          ## data.frame containing the coordinated, height and name of
-          ## the individual stations
-          positions.all <- x.input[[ 2 ]]
-        } else {
-          ## Just an ordinary list of xts elements
-          selection.list <- x.input
-          ##  dummy names
-          if ( is.null( names( selection.list ) ) )
-            names( selection.list ) <- as.character(
-                seq( 1, length( selection.list ) ) ) 
-          ## create a dummy
-          positions.all <- data.frame(
-              longitude = rep( NA, length( selection.list ) ),
-              latitude = rep( NA, length( selection.list ) ),
-              altitude = rep( NA, length( selection.list ) ),
-              name = names( selection.list ) )
-        }
-      }
+      ## select time series with sufficient length
+      selection <- Reduce( c, lapply( selection.list, function( x )
+        length( unique( lubridate::year( x ) ) ) ) ) >= sliderYears()
+      stations.selected <- selection.list[ selection ]
+      stations.selected.names <- names( selection.list )[ selection ]
+      positions.selected <- positions.all[
+        which( stations.selected.names %in% positions.all$name ),  ]
+      ## first element contains a list of all selected stations
+      ## second element contains a data.frame with the longitude,
+      ## latitude, altitude and name of each selected station
+      print( "* data.chosen ready" )
+      return( list( data = stations.selected,
+                   positions = positions.selected ) )
     }
-    ## select time series with sufficient length 
-    selection <- Reduce( c, lapply( selection.list, function( x )
-      length( unique( lubridate::year( x ) ) ) ) ) >= sliderYears()
-    stations.selected <- selection.list[ selection ]
-    positions.selected <- positions.all[ selection,  ]
-    ## first element contains a list of all selected stations
-    ## second element contains a data.frame with the longitude,
-    ## latitude, altitude and name of each selected station
-    return( list( stations.selected, positions.selected ) )
   } )
   return( data )
 }

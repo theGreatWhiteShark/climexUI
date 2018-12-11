@@ -1,4 +1,4 @@
-### Mostly functions associated with preprocessing the individual time
+## Mostly functions associated with preprocessing the individual time
 ### series. Most of those steps can be controlled via the General tab
 
 ##' @title Extracting extreme events in the Climex app
@@ -61,6 +61,7 @@ generalExtremeExtraction <- function( radioEvdStatistics,
                                      buttonMinMax, reactive.selection,
                                      selectDataBase ){
   renderMenu( {
+    print( "* in generalExtremeExtraction" )
     x.xts <- reactive.selection()
     if ( !is.null( radioEvdStatistics() ) &&
          radioEvdStatistics() == "GEV" ){
@@ -133,20 +134,21 @@ generalExtremeExtraction <- function( radioEvdStatistics,
 ##' @author Philipp Mueller 
 cleaning.interactive <- function( x.xts, checkboxIncompleteYears,
                                  checkboxDecluster, sliderThreshold ){
-    x.xts[ which( is.na( x.xts ) ) ] <- NaN
-    x.xts[ which( x.xts == -999 ) ] <- NaN
-    if ( !is.null( checkboxIncompleteYears() ) &&
-         checkboxIncompleteYears() ){
-        ## Remove all incomplete years from time series
-      x.xts <- climex::remove.incomplete.years( x.xts )
-    }
-    if ( !is.null( checkboxDecluster() ) &&
-         checkboxDecluster() ){
-      x.xts <- climex::decluster( x.xts, sliderThreshold() )
-    }
-    if ( any( is.nan( x.xts ) ) )
-      print( "The current time series contains missing values. Please be sure to check 'Remove incomplete years' in the sidebar to avoid wrong results!" )
-    return( x.xts )
+  print( "* in cleaning.interactive" )
+  x.xts[ which( is.na( x.xts ) ) ] <- NaN
+  x.xts[ which( x.xts == -999 ) ] <- NaN
+  if ( !is.null( checkboxIncompleteYears() ) &&
+       checkboxIncompleteYears() ){
+    ## Remove all incomplete years from time series
+    x.xts <- climex::remove.incomplete.years( x.xts )
+  }
+  if ( !is.null( checkboxDecluster() ) &&
+       checkboxDecluster() ){
+    x.xts <- climex::decluster( x.xts, sliderThreshold() )
+  }
+  if ( any( is.nan( x.xts ) ) )
+    print( "The current time series contains missing values. Please be sure to check 'Remove incomplete years' in the sidebar to avoid wrong results!" )
+  return( x.xts )
 }
 
 ##' @title Minimum or maximum extremes in the Climex app
@@ -191,6 +193,7 @@ generalButtonMinMaxInput <- function(){
 ##' @author Philipp Mueller 
 generalButtonMinMax <- function( radioEvdStatistics, selectDataType ){
   renderUI({
+    print( "* in generalButtonMinMax" )
     ## The minimal extremes are only available when using the GEV
     ## distribution
     if ( is.null( radioEvdStatistics() ) ||
@@ -292,6 +295,7 @@ deseasonalizeSelection <- function( selectDataBase ){
 ##' @author Philipp Mueller 
 deseasonalize.interactive <- function( x.xts, selectDeseasonalize,
                                       selectDataBase ){
+  print( "* in deseasonalize.interactive" )
     if ( is.null( x.xts ) ||
          is.null( selectDataBase() ) ){
       ## if the initialization has not finished yet just wait a little
@@ -416,6 +420,7 @@ deseasonalize.interactive <- function( x.xts, selectDeseasonalize,
 extremes.interactive <- function( x.xts, buttonMinMax,
                                  radioEvdStatistics, sliderBlockLength,
                                  sliderThreshold, checkboxDecluster ){
+  print( "* in extremes.interactive" )
   if ( is.null( buttonMinMax() ) &&
        ( !is.null( sliderBlockLength() ) ||
          !is.null( sliderThreshold() ) ) ){
@@ -535,10 +540,12 @@ data.extremes <- function( reactive.selection, radioEvdStatistics,
                           cleaning.interactive,
                           checkboxIncompleteYears ){
   reactive( {
+    print( "* in data.extremes" )
     if ( is.null( reactive.selection() ) ||
          is.null( radioEvdStatistics() ) ){
       ## if the initialization has not finished yet just wait a
       ## little longer
+      print( "Null in data extremes" )
       return( NULL )
     }
     if ( ( radioEvdStatistics() == "GEV" &&
@@ -550,6 +557,7 @@ data.extremes <- function( reactive.selection, radioEvdStatistics,
          ( radioEvdStatistics() == "GP" &&
            buttonMinMax() == "Min" ) ){
       ## Let's wait till the transition is completed
+      print( "Schon ein bisschen weiter in data extremes" )
       return( NULL )
     }
     x.xts <- reactive.selection()

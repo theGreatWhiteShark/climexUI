@@ -23,33 +23,34 @@
 ##' @import leaflet
 ##' @importFrom xts xts
 ##' @author Philipp Mueller 
-climex <- function( list.time.series = NULL,
+climex <- function( list.data.sources = NULL,
                    data.frame.positions = NULL,
                    resource.directory = NULL ){
   ## Checking the input
-  if ( !is.null( list.time.series ) &&
+  if ( !is.null( list.data.sources ) &&
        !is.null( data.frame.positions ) ){
-    input.checked <- climexUI:::check.input( list.time.series,
+    input.checked <- climexUI:::check.input( list.data.sources,
                                             data.frame.positions )
     if ( input.checked$check.result == FALSE ||
-         length( input.checked$list.time.series ) == 0 ||
+         length( input.checked$list.data.sources ) == 0 ||
          nrow( input.checked$data.frame.positions ) == 0 ){
-      list.time.series <- NULL
+      list.data.sources <- NULL
       data.frame.positions <- NULL
     }
   }
   
   ## Fallback of the position data.
-  if ( is.null( list.time.series ) ||
+  if ( is.null( list.data.sources ) ||
        is.null( data.frame.positions ) ){
     ## Both input arguments have to be supplied.
-    if ( !( is.null( list.time.series ) &&
+    if ( !( is.null( list.data.sources ) &&
             is.null( data.frame.positions ) ) ){
       warning(
-              "Both 'list.time.series' and 'data.frame.positions' have to be provided. The default series will be used instead!" )
+              "Both 'list.data.sources' and 'data.frame.positions' have to be provided. The default series will be used instead!" )
     }
     data( "temp.potsdam", package = "climex" )
-    list.time.series <- list( Potsdam = temp.potsdam )
+    list.data.sources <- list( list( Potsdam = temp.potsdam ) )
+    names( list.data.sources ) <- "daily max. temp."
     data.frame.positions <- data.frame(
         name = "Potsdam", longitude = 13.0622,
         latitude = 52.3813, altitude = 81 )
@@ -63,25 +64,29 @@ climex <- function( list.time.series = NULL,
   if ( !dir.exists( resource.directory ) ){
     dir.create( resource.directory, recursive = TRUE )
   }
+  ## Write out the data so the climex server can open and use it.
+  save( list.data.sources, data.frame.positions,
+       file = file.path( resource.directory, "input.RData" ) )
+  
   ## This is, unfortunately, necessary since some JavaScript scripts
   ## are written out and some images are plotted which have to be
   ## accessible within the shiny app.  If there are not the
   ## appropriate files present to run the shiny app, the apps as well
   ## as the folder structure has to be generated
-  if ( !dir.exists( paste0( resource.directory, "app" ) ) )
-    dir.create( paste0( resource.directory, "app" ) )
+  if ( !dir.exists( file.path( resource.directory, "app" ) ) )
+    dir.create( file.path( resource.directory, "app" ) )
   if ( !dir.exists( paste0( resource.directory, "app/www" ) ) )
-    dir.create( paste0( resource.directory, "app/www" ) )
+    dir.create( file.path( resource.directory, "app/www" ) )
   ## In order to display the animation the app needs the jquery
   ## scianimator. Since it is not able to access a system file on its
   ## own the wrapper climex() will copy it to the apps folder
-  if ( !dir.exists( paste0( resource.directory,
-                           "app/www/jquery.scianimator.min.js" ) ) ){
-    file.copy( paste0( system.file( "climex_app",
-                                   package = "climexUI" ),
-                      "/js/jquery.scianimator.min.js" ),
-              to = paste0( resource.directory,
-                          "app/www/jquery.scianimator.min.js" ),
+  if ( !dir.exists( file.path( resource.directory,
+                              "app/www/jquery.scianimator.min.js" ) ) ){
+    file.copy( file.path( system.file( "climex_app",
+                                      package = "climexUI" ),
+                         "/js/jquery.scianimator.min.js" ),
+              to = file.path( resource.directory,
+                             "app/www/jquery.scianimator.min.js" ),
               overwrite = TRUE )
   }
   ## source of the gif: http://i.imgur.com/seuaOqf.gif since this is a
@@ -89,18 +94,18 @@ climex <- function( list.time.series = NULL,
   ## http://imgur.com/tos
   ## Get the newest copy of the script containing the loading GIF.
   file.copy(
-      paste0( system.file( "climex_app", package = "climexUI" ),
-             "/js/loadingGif.js" ),
-      to = paste0( resource.directory, "app/www/loadingGif.js" ),
-      overwrite = TRUE ) 
-  file.copy( paste0( system.file( "climex_app",
-                                 package = "climexUI" ),
-                    "/res/loading.gif" ),
-            to = paste0( resource.directory, "app/www/loading.gif" ) )
+    file.path( system.file( "climex_app", package = "climexUI" ),
+              "/js/loadingGif.js" ),
+    to = file.path( resource.directory, "app/www/loadingGif.js" ),
+    overwrite = TRUE ) 
+  file.copy( file.path( system.file( "climex_app",
+                                    package = "climexUI" ),
+                       "/res/loading.gif" ),
+            to = file.path( resource.directory, "app/www/loading.gif" ) )
   writeLines( "shinyUI( climex.ui() )",
-             con = paste0( resource.directory, "app/ui.R" ) )
+             con = file.path( resource.directory, "app/ui.R" ) )
   writeLines( "shinyServer( climex.server )",
-             con = paste0( resource.directory, "app/server.R" ) )
+             con = file.path( resource.directory, "app/server.R" ) )
   runApp( paste0( resource.directory, "app" ) )
 }
 
@@ -135,15 +140,20 @@ climex <- function( list.time.series = NULL,
 ##' 
 ##' @author Philipp Mueller 
 climex.server <- function( input, output, session ){
-
-  ## Do we already see the fallback input?
-  browser()
   
   ## Create a custom environment to host the variables `last.values`,
   ## `last.1`, `last.2`, and `last.3` in, as well as the station data
   ## in. By referring to this environment the corresponding variables
   ## do not have to be defined globally.
   climex.environment <- new.env( parent = emptyenv() )
+
+  ## Do we already see the fallback input?
+  if ( !file.exists( file.path( getOption( "climex.path" ),
+                            "input.RData" ) ) ){
+    stop( "No input found to display on the climex server" )
+  }
+  load( file.path( getOption( "climex.path" ), "input.RData" ),
+       envir = climex.environment )
   
 ######################################################################
 ######### Customizing the sidebar and launching its reactives ########
@@ -152,13 +162,15 @@ climex.server <- function( input, output, session ){
   ## why do I use the camel case thisIsAName for the shiny objects?
   ## Well, since CSS file do not support the point separator. Type of
   ## database (input, DWD, artificial data)
-  output$sidebarDataBase <- climexUI:::sidebarDataBase( session )
+  output$sidebarDataBase <-
+    climexUI:::sidebarDataBase( session, climex.environment )
   ## Individual station or location (GEV)/scale(GP) for artificial
   ## data
   output$sidebarDataSource <-
     climexUI:::sidebarDataSource( reactive( input$selectDataBase ),
-                               reactive( input$radioEvdStatistics ),
-                               reactive.chosen, selected.station )
+                                 reactive( input$radioEvdStatistics ),
+                                 reactive.chosen,
+                                 selected.station )
   ## Measurement type or scale (GEV)/shape(GP) for artificial data
   output$sidebarDataType <-
     climexUI:::sidebarDataType( reactive( input$selectDataBase ),
@@ -191,16 +203,12 @@ climex.server <- function( input, output, session ){
   ## Display a link to the app's imprint whenever it is run using
   ## shiny-server
   output$sidebarImprint <- climexUI:::sidebarImprint( session )
-  ## Reactive value listening for file input
-  reactive.loading <-
-    climexUI:::file.loading( reactive( input$fileInputSelection ) )
   ## Reactive value which holds the selected stations chosen either
   ## via the leaflet map or the sidebar
   reactive.chosen <- climexUI:::data.chosen(
                                   reactive( input$selectDataBase ),
                                   reactive( input$sliderYears ),
                                   reactive( input$selectDataType ),
-                                  reactive.loading,
                                   climex.environment )
   ## Reactive value selecting a specific time series according to the
   ## choices in the sidebar/leaflet map
@@ -271,7 +279,6 @@ climex.server <- function( input, output, session ){
                               reactive.extreme,
                               reactive( input$selectDataBase ),
                               reactive( input$selectDataType ),
-                              climexUI:::function.get.y.label,
                               reactive( input$radioEvdStatistics ),
                               reactive( input$sliderThreshold ),
                               reactive( input$buttonMinMax ) )
@@ -281,7 +288,6 @@ climex.server <- function( input, output, session ){
              reactive.rows, reactive.fitting,
              reactive( input$buttonMinMax ),
              reactive( input$radioEvdStatistics ),
-             climexUI:::function.get.y.label,
              reactive( input$selectDataBase ), 
              reactive( input$selectDataType ),
              reactive( input$sliderThreshold ) )

@@ -37,20 +37,17 @@ sidebarDataBaseInput <- function(){
 ##'
 ##' @return renderMenu
 ##' @author Philipp Mueller 
-sidebarDataBase <- function( session ){
+sidebarDataBase <- function( session, climex.environment ){
   ## Disable the input option for the shiny server
   renderMenu( {
-    if ( session$clientData$url_hostname == "localhost" ||
-         session$clientData$url_hostname == "127.0.0.1" ){
-      selectInput( "selectDataBase", "Data base",
-                  choices = c( "DWD", "Input", "Artificial data" ),
-                  selected = "DWD" )
-    } else {
-      selectInput( "selectDataBase", "Data base",
-                  choices = c( "DWD", "Artificial data" ),
-                  selected = "DWD" )
-    }
-  } )
+    print( "* in sidebarDataBase" )
+    selectInput( "selectDataBase", "Data set",
+                choices = c( names(
+                  climex.environment$list.data.sources ),
+                  "Artificial data" ),
+                selected = names(
+                  climex.environment$list.data.sources )[ 1 ] )
+  })
 }
 
 ##' @title Sidebar menu selection in the Climex app
@@ -106,13 +103,16 @@ sidebarDataSourceInput <- function(){
 ##' @return renderMenu
 ##' @author Philipp Mueller 
 sidebarDataSource <- function( selectDataBase, radioEvdStatistics,
-                               reactive.chosen, selected.station ){
+                              reactive.chosen, selected.station ){
   renderMenu( {
+    print( "* in sidebarDataSource" )
     ## If artificial data was choosen as the input source, display
     ## a slider for the location parameter of the parent GEV
     ## distribution
-    if ( !is.null( selectDataBase() ) &&
-         selectDataBase() == "Artificial data" ){
+    if ( is.null( selectDataBase() ) ||
+         is.null( reactive.chosen() ) ){
+      return( NULL )
+    } else if ( selectDataBase() == "Artificial data" ){
       if ( is.null( radioEvdStatistics() ) ||
            radioEvdStatistics() == "GEV" ){
         ## For GEV data
@@ -124,35 +124,23 @@ sidebarDataSource <- function( selectDataBase, radioEvdStatistics,
                     "Scale", 0, 4, .8, round = 0, step = .1 )
       }
     } else {
-      ## In case of the DWD data, just show the stations which amount
-      ## of years is larger than the specified number (slider)
-      ## list(stations.selected, position.selected). This already does
-      ## the look-up in file.loading(), input$selectDataBase and
-      ## input$selectDataType so no need to repeat these steps.
-      data.selected <- reactive.chosen()
       ## Since this is not a crucial element and the other elements
       ## have a fallback to the Potsdam time series we can just wait
       ## until input$selectDataBase and input$sliderYears( used in
       ## data.chosen ) are initialized 
-      if ( is.null( selectDataBase() ) ||
-           is.null( data.selected ) ){
-        return( NULL )
-      }
       ## Use the leaflet map to choose a individual station
       if ( !is.null( selected.station() ) ){
         station.name <- selected.station()
       } else {
-        ## If not just use the Potsdam station for the DWD data
-        ## or the first station in the list for every other source
-        if ( selectDataBase() == "DWD" ){
-          station.name <- "Potsdam"
-        } else
+        ## If no station was selected yet, pick a random one.
           station.name <- as.character(
-              data.selected[[ 2 ]]$name[ 1 ] )
+            reactive.chosen()$positions$name[
+              sample( seq( 1 : nrow( reactive.chosen()$position ) ),
+                     size = 1 ) ] )
       }
       ## export drop-down menu
       selectInput( "selectDataSource", "Station",
-                  choices = as.character( data.selected[[ 2 ]]$name ),
+                  choices = as.character( reactive.chosen()$positions$name ),
                   selected = as.character( station.name ) )
     }
   } )
@@ -204,14 +192,9 @@ sidebarDataTypeInput <- function(){
 ##' @author Philipp Mueller
 sidebarDataType <- function( selectDataBase, radioEvdStatistics ){
   renderMenu( {
-    if ( !is.null( selectDataBase() ) ){
-      if ( selectDataBase() == "DWD" ){
-        selectInput( "selectDataType", "Measured variable",
-                    choices = c( "Daily max. temp.",
-                                "Daily min. temp.",
-                                "Daily precipitation" ),
-                    selected = "Daily max. temp" )
-      } else if ( selectDataBase() == "Artificial data" ){
+    print( "* in sidebarDataType" )
+    if ( !is.null( selectDataBase() ) &&
+         selectDataBase() == "Artificial data" ){
         if ( is.null( radioEvdStatistics() ) ||
              radioEvdStatistics() == "GEV" ){
           sliderInput( "sliderArtificialDataScale", "Scale", 0, 4,
@@ -221,11 +204,10 @@ sidebarDataType <- function( selectDataBase, radioEvdStatistics ){
           sliderInput( "sliderArtificialDataShape", "Shape", -.7, .7,
                       -.25, round = -2, step = .1 )
         }
-      } else if ( selectDataBase() == "Input" ){
-        div( id = "aux-placeholder", style = "height: 0px;" )
-      }
-    } else
-      NULL } )
+    } else {
+      return( NULL )
+    }
+  } )
 }
 
 ##' @title Sidebar menu selection in the Climex app
@@ -278,6 +260,7 @@ sidebarLoadingInput <- function(){
 sidebarLoading <- function( session, selectDataBase,
                            radioEvdStatistics ){
   renderMenu( {
+        print( "* in sidebarLoading" )
     if ( is.null( selectDataBase() ) )
       return( NULL )
     if ( selectDataBase() == "Artificial data" &&
@@ -348,6 +331,7 @@ sidebarCleaning <- function( radioEvdStatistics, selectDataBase ){
     ## to occure due to short range correlations. This has to be
     ## avoided by using declustering algorithms (which mainly picks
     ## the maximum of a specific cluster)
+    print( "* in sidebarCleaning" )
     if ( is.null( selectDataBase() ) ||
          selectDataBase() != "Artificial data" ){
       if ( is.null( radioEvdStatistics() ) ||
@@ -407,6 +391,7 @@ sidebarSeriesLengthInput <- function(){
 ##' @author Philipp Mueller 
 sidebarSeriesLength <- function( selectDataBase ){
   renderMenu({
+    print( "* in sidebarSeriesLength" )
     if ( !is.null( selectDataBase() ) &&
          selectDataBase() == "Artificial data" ){
       ## In order to display the return levels on a
@@ -489,14 +474,14 @@ data.selection <- function( reactive.chosen, selectDataSource,
                            sliderArtificialDataShape, buttonDrawTS,
                            sliderSeriesLength ){
   reactive( {
+    print( "* in data.selection" )
     ## Selecting the data out of a pool of different possibilities
     ## or generate them artificially
     data.selected <- reactive.chosen()
     if ( is.null( data.selected ) ||
          is.null( selectDataSource() ) ||
-         is.null( selectDataBase() ) ||
-         ( selectDataBase() == "GP" &&
-           is.null( sliderThreshold() ) ) ){
+         is.null( selectDataBase() ) ){
+      print( "null in data.selection" )
       return( NULL )
     }
     if( selectDataBase() == "Artificial data" ){
@@ -538,26 +523,21 @@ data.selection <- function( reactive.chosen, selectDataSource,
                threshold = 0 ),
           order.by = dates )
     } else {
-      ## In all other cases the possible choices are contained in
-      ## the data.selected object and are agnostic of the data base
-      ## /input chosen
-      if ( any( class( data.selected[[ 1 ]] ) == "xts" ) ){
-        x.xts <- data.selected[[ 1 ]]
-      } else {
-        ## There is a bug when switching from one data base into
-        ## another: since the input$selectDataSource needs a
-        ## little bit longer to update it tries to access a value
-        ## in here which is might not present in the newly
-        ## selected one. If this happens, just select the first
-        ## element instead
-        if ( !any(  names( data.selected[[ 1 ]] ) ==
-                    selectDataSource() ) ){
-          x.xts <- data.selected[[ 1 ]][[ 1 ]]
-          print( "New data source selected." )
-        } else
-          x.xts <- data.selected[[ 1 ]][[
-                     which( names( data.selected[[ 1 ]] ) ==
-                            selectDataSource() ) ]] } }
+      ## There is a bug when switching from one data base into
+      ## another: since the input$selectDataSource needs a
+      ## little bit longer to update it tries to access a value
+      ## in here which is might not present in the newly
+      ## selected one. If this happens, just select the first
+      ## element instead
+      if ( !any( names( data.selected[[ 1 ]] ) ==
+                  selectDataSource() ) ){
+        x.xts <- data.selected[[ 1 ]][[ 1 ]]
+        print( "New data source selected." )
+      } else
+        x.xts <- data.selected[[ 1 ]][[
+                   which( names( data.selected[[ 1 ]] ) ==
+                          selectDataSource() ) ]] }
+    print( "* data.selection ready" )
     return( x.xts )
   } )
 }
@@ -582,6 +562,7 @@ data.selection <- function( reactive.chosen, selectDataSource,
 ##' @author Philipp Mueller 
 file.loading <- function( fileInputSelection ){
   reactive( {
+    print( "* in file.loading" )
     ## If no file is chosen, don't do anything
     if ( is.null( fileInputSelection()$datapath ) )
       return( NULL )
@@ -654,6 +635,7 @@ sidebarLoadingGifOutput <- function( id ){
 ##' @return div
 ##' @author Philipp Mueller 
 sidebarLoadingGif <- function( input, output, session ){
+  print( "* in sidebarLoadingGif" )
   output$loadingImage <- renderUI({
     if ( session$clientData$url_hostname != "localhost" &&
          session$clientData$url_hostname != "127.0.0.1" ){
@@ -708,6 +690,7 @@ sidebarImprintInput <- function(){
 ##' @author Philipp Mueller 
 sidebarImprint <- function( session ){
   renderMenu({
+    print( "* in sidebarImprint" )
     ## Only display the imprint in the shiny-server and not on
     ## localhost
     if ( session$clientData$url_hostname == "localhost" ||
