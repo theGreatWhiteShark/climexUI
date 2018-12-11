@@ -56,3 +56,4 @@ Other sidebar: \code{\link{data.selection}},
 \author{
 Philipp Mueller
 }
+\concept{sidebar}

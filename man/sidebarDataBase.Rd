@@ -4,7 +4,7 @@
 \alias{sidebarDataBase}
 \title{Selecting the database in the Climex app}
 \usage{
-sidebarDataBase(session)
+sidebarDataBase(session, climex.environment)
 }
 \arguments{
 \item{session}{Namespace session. For details check out
@@ -49,3 +49,4 @@ Other sidebar: \code{\link{data.selection}},
 \author{
 Philipp Mueller
 }
+\concept{sidebar}

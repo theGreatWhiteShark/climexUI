@@ -226,6 +226,7 @@ leafletClimex <- function( input, output, session, reactive.chosen,
                          data.selected[[ 2 ]]$latitude ) ) ) ){
         ## I am dealing with either a placeholder or a compromised
         ## data.frame. Anyway, the leaflet map can not handle it
+        print( "the selected data seems to be compromised" )
         return( NULL )
       }
       leafletProxy( session$ns( "map" ) ) %>%
@@ -588,7 +589,7 @@ data.chosen <- function( selectDataBase, sliderYears,
       stations.selected <- selection.list[ selection ]
       stations.selected.names <- names( selection.list )[ selection ]
       positions.selected <- positions.all[
-        which( stations.selected.names %in% positions.all$name ),  ]
+        which( positions.all$name %in% stations.selected.names ),  ]
       ## first element contains a list of all selected stations
       ## second element contains a data.frame with the longitude,
       ## latitude, altitude and name of each selected station

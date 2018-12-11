@@ -36,9 +36,16 @@ climex <- function( list.data.sources = NULL,
          nrow( input.checked$data.frame.positions ) == 0 ){
       list.data.sources <- NULL
       data.frame.positions <- NULL
+    } else {
+      ## The `check.input` function will convert the input into a
+      ## format the functions of the climexUI package can handle. In
+      ## addition, it discards all stations who's names did not occur
+      ## in the data.frame.positions table.
+      list.data.sources <- input.checked$list.data.sources
+      data.frame.positions <- input.checked$data.frame.positions
     }
   }
-  
+
   ## Fallback of the position data.
   if ( is.null( list.data.sources ) ||
        is.null( data.frame.positions ) ){
@@ -48,12 +55,10 @@ climex <- function( list.data.sources = NULL,
       warning(
               "Both 'list.data.sources' and 'data.frame.positions' have to be provided. The default series will be used instead!" )
     }
-    data( "temp.potsdam", package = "climex" )
-    list.data.sources <- list( list( Potsdam = temp.potsdam ) )
-    names( list.data.sources ) <- "daily max. temp."
-    data.frame.positions <- data.frame(
-        name = "Potsdam", longitude = 13.0622,
-        latitude = 52.3813, altitude = 81 )
+    data( "list.data.sources.fallback", package = "climexUI" )
+    data( "data.frame.positions.fallback", package = "climexUI" )
+    list.data.sources <- list.data.sources.fallback
+    data.frame.positions <- data.frame.positions.fallback
   }
   
   if ( is.null( resource.directory ) ){

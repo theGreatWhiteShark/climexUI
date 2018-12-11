@@ -22,11 +22,11 @@ This function provides the ouput to
   the \pkg{ggplot2} package.
 }
 \seealso{
-Other climex-plot: \code{\link{function.get.y.label}},
-  \code{\link{generalFitPlot}},
+Other climex-plot: \code{\link{generalFitPlot}},
   \code{\link{generalTimeSeriesPlotOutput}},
   \code{\link{generalTimeSeriesPlot}}
 }
 \author{
 Philipp Mueller
 }
+\concept{climex-plot}

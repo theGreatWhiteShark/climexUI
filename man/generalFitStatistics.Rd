@@ -65,3 +65,4 @@ Other climex-fitting: \code{\link{color.table}},
 \author{
 Philipp Mueller
 }
+\concept{climex-fitting}

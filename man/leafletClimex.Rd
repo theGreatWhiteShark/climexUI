@@ -131,3 +131,4 @@ Other leaflet: \code{\link{data.chosen}},
 \author{
 Philipp Mueller
 }
+\concept{leaflet}

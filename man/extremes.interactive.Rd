@@ -4,8 +4,8 @@
 \alias{extremes.interactive}
 \title{Extracting extreme events in the Climex app}
 \usage{
-extremes.interactive(x.xts, buttonMinMax, radioEvdStatistics, sliderBlockLength,
-  sliderThreshold, checkboxDecluster)
+extremes.interactive(x.xts, buttonMinMax, radioEvdStatistics,
+  sliderBlockLength, sliderThreshold, checkboxDecluster)
 }
 \arguments{
 \item{x.xts}{Time series of class \pkg{xts} which has to be
@@ -60,3 +60,4 @@ Other preprocessing: \code{\link{cleaning.interactive}},
 \author{
 Philipp Mueller
 }
+\concept{preprocessing}

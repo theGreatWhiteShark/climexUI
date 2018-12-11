@@ -4,8 +4,8 @@
 \alias{generalTimeSeriesPlot}
 \title{Time series plot in the Climex app.}
 \usage{
-generalTimeSeriesPlot(input, output, session, reactive.extreme, selectDataBase,
-  selectDataType, function.get.y.label, radioEvdStatistics, sliderThreshold,
+generalTimeSeriesPlot(input, output, session, reactive.extreme,
+  selectDataBase, selectDataType, radioEvdStatistics, sliderThreshold,
   buttonMinMax)
 }
 \arguments{
@@ -37,13 +37,6 @@ additional layer of lists can e.g. represent different types of
 measurement data like precipitation and temperature. Their names
 are derived from the names of the input list (see \code{link{
 menuSelectDataType}}).}
-
-\item{function.get.y.label}{Function determining the label of the
-y axis in all three
-plots. \code{\link{function.get.y.label}}. You might wonder why
-I am not just referring to the package internal function right
-away instead of requiring it as an input. Well, this way the
-whole app becomes way more easy to customize.}
 
 \item{radioEvdStatistics}{Character (radio) input determining
 whether the GEV or GP distribution shall be fitted to the
@@ -78,11 +71,11 @@ Both the pure time series and the deseasonalized one are
   function.
 }
 \seealso{
-Other climex-plot: \code{\link{function.get.y.label}},
-  \code{\link{generalFitPlotOutput}},
+Other climex-plot: \code{\link{generalFitPlotOutput}},
   \code{\link{generalFitPlot}},
   \code{\link{generalTimeSeriesPlotOutput}}
 }
 \author{
 Philipp Mueller
 }
+\concept{climex-plot}

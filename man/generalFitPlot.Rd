@@ -5,8 +5,8 @@
 \title{Plot of the fits in the Climex app}
 \usage{
 generalFitPlot(input, output, session, reactive.extreme, reactive.rows,
-  reactive.fitting, buttonMinMax, radioEvdStatistics, function.get.y.label,
-  selectDataBase, selectDataType, sliderThreshold)
+  reactive.fitting, buttonMinMax, radioEvdStatistics, selectDataBase,
+  selectDataType, sliderThreshold)
 }
 \arguments{
 \item{input}{Namespace input. For more details check out
@@ -36,13 +36,6 @@ biggest vales. Choices: c( "Max", "Min ), default = "Max".}
 \item{radioEvdStatistics}{Character (radio) input determining
 whether the GEV or GP distribution shall be fitted to the
 data. Choices: c( "GEV", "GP" ), default = "GEV".}
-
-\item{function.get.y.label}{Function determining the label of the
-y axis in all three
-plots. \code{\link{function.get.y.label}}. You might wonder why
-I am not just referring to the package internal function right
-away instead of requiring it as an input. Well, this way the
-whole app becomes way more easy to customize.}
 
 \item{selectDataBase}{Character (select) input to determine the
 data source. In the default installation there are two
@@ -80,11 +73,11 @@ All four plots are rendered using the \pkg{ggplot2}
   package.
 }
 \seealso{
-Other climex-plot: \code{\link{function.get.y.label}},
-  \code{\link{generalFitPlotOutput}},
+Other climex-plot: \code{\link{generalFitPlotOutput}},
   \code{\link{generalTimeSeriesPlotOutput}},
   \code{\link{generalTimeSeriesPlot}}
 }
 \author{
 Philipp Mueller
 }
+\concept{climex-plot}

@@ -98,3 +98,4 @@ Other sidebar: \code{\link{file.loading}},
 \author{
 Philipp Mueller
 }
+\concept{sidebar}

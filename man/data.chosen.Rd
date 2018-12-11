@@ -4,7 +4,7 @@
 \alias{data.chosen}
 \title{Choosing a data set in the Climex app}
 \usage{
-data.chosen(selectDataBase, sliderYears, selectDataType, reactive.loading,
+data.chosen(selectDataBase, sliderYears, selectDataSource,
   climex.environment)
 }
 \arguments{
@@ -23,6 +23,11 @@ displayed. Minimal value is 0 and maximal is 155 (longest one in
 the DWD database), the default value is 65 and the step width is
 1.}
 
+\item{climex.environment}{Environment containing the global
+variables used within the climex app. Namely the last values
+displayed in the table and the lists containing the station
+data.}
+
 \item{selectDataType}{Character (select) input to determine which
 set of measurements should be used. This choice is important if
 the input of the \code{\link{climex}} function was not just a
@@ -35,11 +40,6 @@ menuSelectDataType}}).}
 \item{reactive.loading}{Reactive value allowing the user to load a
 time series of class \pkg{xts} or as a list of class \pkg{xts}
 objects into the climex app. \code{\link{file.loading}}}
-
-\item{climex.environment}{Environment containing the global
-variables used within the climex app. Namely the last values
-displayed in the table and the lists containing the station
-data.}
 }
 \value{
 Reactive list containing a list of all selected stations
@@ -61,3 +61,4 @@ Other leaflet: \code{\link{leafletClimexUI}},
 \author{
 Philipp Mueller
 }
+\concept{leaflet}

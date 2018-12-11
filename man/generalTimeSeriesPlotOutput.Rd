@@ -25,11 +25,11 @@ This function provides the ouput to
   package.
 }
 \seealso{
-Other climex-plot: \code{\link{function.get.y.label}},
-  \code{\link{generalFitPlotOutput}},
+Other climex-plot: \code{\link{generalFitPlotOutput}},
   \code{\link{generalFitPlot}},
   \code{\link{generalTimeSeriesPlot}}
 }
 \author{
 Philipp Mueller
 }
+\concept{climex-plot}

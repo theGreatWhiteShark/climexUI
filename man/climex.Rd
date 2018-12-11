@@ -4,36 +4,29 @@
 \alias{climex}
 \title{The Climex app initialization}
 \usage{
-climex()
+climex(list.data.sources = NULL, data.frame.positions = NULL,
+  resource.directory = NULL)
+}
+\arguments{
+\item{resource.directory}{Folder all the resources of the app,
+like JavaScript scripts, images etc., will be copied in. If
+NULL, the content will be copied in the directory contained in
+the global \emph{climex.path} variable pointing at
+\emph{~/R/climex/}. Note that the folder won't be removed
+afterwards. Default: NULL.}
 }
 \value{
-starts a shiny app.
+starts a shiny app
 }
 \description{
 Shiny app combining most of the tools used in extreme
-  value analysis using GEV fitting via maximum likelihood.
+  value analysis using the generalized extreme value (GEV) or
+  generalized Pareto (GP) fitting via maximum likelihood.
 }
 \details{
-It possible to provide a time series of type \pkg{xts} to
-  a list of elements of this type.
-
-  This app need the its own css file.
-  This function will be exclusively called when the climex app is
-  run on localhost. In order to assure its correct behavior the
-  necessary file/folder structure in the climex.path (R option
-  which has to be set beforehand; "~/R/climex/" on default) will
-  be check and if necesary generated. The input time series is
-  accepted in three different formats
-  \enumerate{
-    \item As a single time series in the formatted using the
-          \pkg{xts} package 
-    \item As a named list of various xts time series 
-    \item As a list containing two elements;  a list of xts time
-          series and a data.frame with the columns
-          \emph{longitude}, \emph{latitude}, \emph{altitude},
-          \emph{name} corresponding to the stations
-          geo-coordinates, height and name  
-  }
+This app needs its own css file. In order to assure its
+  correct behavior, the folder \emph{resource.directory} will be
+  generated to store all the necessary configuration scripts.
 }
 \seealso{
 Other top-level: \code{\link{climex.server}},
@@ -42,3 +35,4 @@ Other top-level: \code{\link{climex.server}},
 \author{
 Philipp Mueller
 }
+\concept{top-level}
