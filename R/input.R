@@ -41,8 +41,26 @@ check.input <- function( list.data.sources, data.frame.positions ){
   }
   if ( !all( Reduce( c, lapply( list.data.sources, function( ss )
     Reduce( c, lapply( ss, is.zoo ) ) ) ) ) ){
-    warning( "All elements of the lists within list.data.sources have to be 'xts'-class objects!" )
-    check.result <- FALSE
+      if ( all( Reduce( c, lapply( list.data.sources, function( ss )
+        Reduce( c, lapply( ss, is.data.frame ) ) ) ) ) ){
+        ## This second data format allows the individual time series
+        ## to be of type 'data.frame'. Have to be converted into class
+        ## 'xts'.
+        print( "Converting the input data into class 'xts' for internal handling..." )
+        ## An auxiliary object will be generated holding both the
+        ## successfully converted series and those replaced by NULL
+        ## since their conversion failed.
+        list.data.sources.aux <-
+          lapply( list.data.sources, function( ss )
+            lapply( ss, convert.data.frame.to.xts ) )
+        ## Discard all series for which the conversion did fail.
+        list.data.sources <-
+          lapply( list.data.sources.aux, function( ss )
+            ss[ !Reduce( c, lapply( ss, is.null ) ) ] )
+      } else {
+        warning( "All elements of the lists within list.data.sources have to be 'xts'-class objects!" )
+        check.result <- FALSE
+      }
   }
   if ( is.null( names( list.data.sources ) ) ||
        any( Reduce( c, lapply( list.data.sources, function( ll )
@@ -92,3 +110,22 @@ check.input <- function( list.data.sources, data.frame.positions ){
                data.frame.positions = data.frame.positions ) )
 }
 
+  
+convert.data.frame.to.xts <- function( input.df ){
+  ## Check the structure of the input
+  if ( !is.data.frame( input.df ) ||
+       !all( colnames( input.df ) %in% c( "value", "date" ) ) ||
+       !is.numeric( input.df$value ) ||
+       !( class( input.df$date ) == "Date" ) ){
+    return( NULL )
+  }
+  
+  output.xts <- try( xts( input.df$value, order.by = input.df$date ) )
+  ## Check whether the conversion did work.
+  if ( any( class( output.xts ) == "try-error" ) ){
+    return( NULL )
+  } else {
+    return( output.xts )
+  }
+}
+  
