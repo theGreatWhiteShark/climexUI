@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_preprocessing.R
 \name{extremes.interactive}
 \alias{extremes.interactive}
-\title{Extracting extreme events in the Climex app}
+\title{Extracting extreme events in the \code{climex} app}
 \usage{
 extremes.interactive(x.xts, buttonMinMax, radioEvdStatistics,
   sliderBlockLength, sliderThreshold, checkboxDecluster)
@@ -13,7 +13,7 @@ cleaned.}
 
 \item{buttonMinMax}{Character (radio) input determining whether
 the GEV/GP distribution shall be fitted to the smallest or
-biggest vales. Choices: c( "Max", "Min ), default = "Max".}
+biggest values. Choices: c( "Max", "Min ), default = "Max".}
 
 \item{radioEvdStatistics}{Character (radio) input determining
 whether the GEV or GP distribution shall be fitted to the
@@ -30,21 +30,23 @@ deseasonalized time series (rounded). Default: 0.8* the upper
 end point.}
 
 \item{checkboxDecluster}{Logical (checkbox) input determining
-whether to remove all clusters in a time series and replace them
-by their maximal value. This box will be only available if
-input$radioEvdStatistics == "GP" and else will be NULL.}
+whether to remove all clusters in a time series and to replace
+them by their maximal value. This box will be only available if
+\code{radioEvdStatistics} equals \code{"GP"} and else will be
+\code{NULL}.}
 }
 \value{
 Time series of class \pkg{xts}.
 }
 \description{
-Function to extract the extreme event from a time
+Function to  extract the extreme  event from  a time
   series.
 }
 \details{
-If the input$radioEvdStatistics is set to "GEV" the time
-  series will be block. If it's on the other hand set to "GP", all
-  values above a certain threshold will be extracted.
+If \code{radioEvdStatistics}  is set to \code{"GEV"}, the
+  time series  will be  block. If  it's on the  other hand  set to
+  \code{"GP"}, all values above a threshold \code{sliderThreshold}
+  will be extracted.
 }
 \seealso{
 Other preprocessing: \code{\link{cleaning.interactive}},

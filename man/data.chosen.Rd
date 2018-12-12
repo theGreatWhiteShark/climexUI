@@ -2,57 +2,42 @@
 % Please edit documentation in R/climex_leaflet.R
 \name{data.chosen}
 \alias{data.chosen}
-\title{Choosing a data set in the Climex app}
+\title{Choosing a data set in the \code{climex} app}
 \usage{
-data.chosen(selectDataBase, sliderYears, selectDataSource,
-  climex.environment)
+data.chosen(selectDataBase, sliderYears, climex.environment)
 }
 \arguments{
 \item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+data source. It is either of one of the names of the provided
+list in the \code{list.data.sources} argument of the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive} object containing random numbers
+drawn from the distribution specified using
+\code{radioEvdStatistics}. Default = a random element of
+the provided input.}
 
 \item{sliderYears}{Numerical (slider) input to determine the
 minimal length (in years) of the time series to be
-displayed. Minimal value is 0 and maximal is 155 (longest one in
-the DWD database), the default value is 65 and the step width is
-1.}
+displayed. Minimal value is 0 and maximal is 155, the default
+value is 65 and the step width is 1.}
 
 \item{climex.environment}{Environment containing the global
-variables used within the climex app. Namely the last values
-displayed in the table and the lists containing the station
-data.}
-
-\item{selectDataType}{Character (select) input to determine which
-set of measurements should be used. This choice is important if
-the input of the \code{\link{climex}} function was not just a
-list of different station data, but a list of such lists. This
-additional layer of lists can e.g. represent different types of
-measurement data like precipitation and temperature. Their names
-are derived from the names of the input list (see \code{link{
-menuSelectDataType}}).}
-
-\item{reactive.loading}{Reactive value allowing the user to load a
-time series of class \pkg{xts} or as a list of class \pkg{xts}
-objects into the climex app. \code{\link{file.loading}}}
+variables used within the \code{climex} app. Namely the last
+values displayed in the table and the lists containing the
+station data.}
 }
 \value{
-Reactive list containing a list of all selected stations
-  and their positions.
+Reactive \code{list}  containing  a  \code{list} of  all
+  selected stations and their positions.
 }
 \description{
 This functions extracts all stations containing more
-  than a specified number of years of data
+  than a specified number of years of data.
 }
 \details{
-It uses the current database and returns all stations
-  which are at least as long as the value of the input$sliderYears
-  slider.
+It uses the current database and returns all stations,
+  which are at least as long as \code{sliderYears}.
 }
 \seealso{
 Other leaflet: \code{\link{leafletClimexUI}},

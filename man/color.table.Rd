@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_fitting.R
 \name{color.table}
 \alias{color.table}
-\title{Colorful tables in Climex app}
+\title{Colorful tables in the \code{climex} app}
 \usage{
 color.table(x.html.table, css.colours,
   style = "table-condensed table-bordered")
@@ -21,9 +21,9 @@ Same format as input.
 Adds font color to a HTML table.
 }
 \details{
-In each element of the table where the font should be
-colored, the corresponding color has to be added via a
-paste( as.character( table[ x, y ] ), "#0000FF" ).
+In each element of the table, where the font should be
+colored, the corresponding color has to be added via
+\code{paste( as.character( table[ x, y ] ), "#0000FF" )}.
 }
 \seealso{
 \code{\link[pander]{pandoc.table.return}} and

@@ -2,23 +2,35 @@
 % Please edit documentation in R/input.R
 \name{check.input}
 \alias{check.input}
-\title{Check whether the input fulfills our requirements.}
+\title{Check whether the input fulfills our requirements}
 \usage{
 check.input(list.data.sources, data.frame.positions, silent = FALSE)
 }
 \arguments{
-\item{list.data.sources}{A named list of \pkg{xts}-class time
-series.}
+\item{list.data.sources}{A named \code{list} of named \code{list}s
+of \pkg{xts}-class time series or \code{data.frame}s. The first
+level of hierarchy in the list corresponds to the different
+climatological variables, which will be accessible via the first
+drop down menu in the sidebar. The second level corresponds to
+the names of the individual stations measurements of the top
+level variable are available for. The series themselves can be
+provided either as a \pkg{xts} object to \code{data.frame}
+containing a numerical \code{value} and a time-date \code{date}
+column.}
 
-\item{data.frame.positions}{A data.frame containing at least the
-named columns \emph{name}, \emph{longitude}, and
-\emph{latitude}.}
+\item{data.frame.positions}{Either a \code{data.frame} containing
+at least the named columns \emph{name}, \emph{longitude}, and
+\emph{latitude} or a \code{\link[sp]{SpatialPointsDataFrame}}
+containing a \code{name} column in its \code{@data} slot.}
+
+\item{silent}{Whether to display warnings if the check
+failed. Default = FALSE.}
 }
 \value{
 A list containing the result of the check (TRUE if the
   input has the right format) and a version of the input stripped
-  of any list elements and data.frame columns, which just appear
-  in one of the input arguments.
+  of any \code{list} elements and \code{data.frame} columns, which
+  just appear in one of the input arguments.
   \itemize{
     \item{ check.result: Boolean }
     \item{ list.data.sources: Same format as input }
@@ -26,15 +38,24 @@ A list containing the result of the check (TRUE if the
  }
 }
 \description{
-The time series have to be provided as a named list
-  of class \pkg{xts} objects and the position data has to be a
-  data.frame containing at least the named columns \emph{name},
-  \emph{longitude}, and \emph{latitude}.
+The  time  series  has to  be  provided  as a  named
+  \code{list}  of   named  \code{list}s  of  class   \pkg{xts}  or
+  \code{data.frame}  objects.   The  position  data has  to  be  a
+  \code{data.frame}   containing  at   least  the   named  columns
+  \emph{name},   \emph{longitude},   and  \emph{latitude}   or   a
+  \code{\link[sp]{SpatialPointsDataFrame}}       containing      a
+  \emph{name} column in their data slot.
 }
 \details{
-All named elements of `list.data.sources`, which do not
-  appear in `data.frame.positions$name` will be discarded and vice
-  versa.
+All named elements of  code{list.data.sources}, which do
+  not     appear     in      the     \code{name}     column     of
+  \code{data.frame.positions} will be discarded and vice versa.
+
+  Internally the \code{data.frame}-type of
+  \code{list.data.sources} will be converted into the \pkg{xts}
+  type and the \code{\link[sp]{SpatialPointsDataFrame}} type of
+  \code{data.frame.positions} will be converted into its
+  \code{data.frame} equivalent.
 }
 \author{
 Philipp Mueller

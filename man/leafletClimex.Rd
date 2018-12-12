@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_leaflet.R
 \name{leafletClimex}
 \alias{leafletClimex}
-\title{Leaflet interface in Climex app}
+\title{Leaflet interface in the \code{climex} app}
 \usage{
 leafletClimex(input, output, session, reactive.chosen, buttonMinMax,
   radioEvdStatistics, sliderYears, reactive.extreme, reactive.fitting,
@@ -20,12 +20,12 @@ leafletClimex(input, output, session, reactive.chosen, buttonMinMax,
 \item{session}{Namespace session.}
 
 \item{reactive.chosen}{Reactive value containing a list of the
-list of all provided stations and a data.frame containing the
-meta data.}
+list of all provided stations and a \code{data.frame} containing
+the meta data.}
 
 \item{buttonMinMax}{Character (radio) input determining whether
 the GEV/GP distribution shall be fitted to the smallest or
-biggest vales. Choices: c( "Max", "Min ), default = "Max".}
+biggest values. Choices: c( "Max", "Min ), default = "Max".}
 
 \item{radioEvdStatistics}{Character (radio) input determining
 whether the GEV or GP distribution shall be fitted to the
@@ -33,18 +33,19 @@ data. Choices: c( "GEV", "GP" ), default = "GEV".}
 
 \item{sliderYears}{Numerical (slider) input to determine the
 minimal length (in years) of the time series to be
-displayed. Minimal value is 0 and maximal is 155 (longest one in
-the DWD database), the default value is 65 and the step width is
-1.}
+displayed. Minimal value is 0 and maximal is 155, the default
+value is 65 and the step width is 1.}
 
 \item{reactive.extreme}{Reactive value returning a list containing
 three elements: 1. the blocked time series, 2. the
 deseasonalized time series, and 3. the pure time series.}
 
 \item{reactive.fitting}{Reactive value containing the results of
-the fit (\code{\link{fit.gev}} or \code{\link{fit.gpd}}
-depending on radioEvdStatistic) to the blocked time series in
-reactive.extreme()[[ 1 ]].}
+the fit (\code{\link[climex]{fit.gev}} or
+\code{\link[climex]{fit.gpd}} depending on
+\code{radioEvdStatistic}) to the blocked time series in 
+in the first element of the list returned by
+\code{\link{data.extremes}}.}
 
 \item{sliderThreshold}{Numerical (slider) input determining the
 threshold used within the GP fit and the extraction of the
@@ -64,25 +65,29 @@ seasonality from a given time
 series. \code{\link{deseasonalize.interactive}}}
 
 \item{extremes.interactive}{Function used to split a time series
-into blocks of equal lengths and to just extract the maximal
-values from then or to extract all data points above a certain
+into blocks of equal lengths and to just extract their maximal
+values or to extract all data points above a certain
 threshold value. Which option is chosen depends of the
-radioEvdStatistic. \code{\link{extremes.interactive}}}
+\code{radioEvdStatistic}. See
+\code{\link{extremes.interactive}}.}
 
 \item{selectDataSource}{Menu output in the sidebar. Since this
-function should only be triggered when selectDataBase equals
-"Input", this input will be a character string describing the
-selected station's name.}
+function should only be triggered when
+\code{selectDataBase} equals \code{"Input"}, this input
+will be a character string describing the selected station's
+name.}
 
 \item{checkboxIncompleteYears}{Logical (checkbox) input
 determining whether to remove all incomplete years of a time
 series. This box  will be only available if
-input$radioEvdStatistics == "GEV" and else will be NULL.}
+\code{radioEvdStatistics} equals \code{"GEV"} and else will be
+\code{NULL}.}
 
 \item{checkboxDecluster}{Logical (checkbox) input determining
 whether to remove all clusters in a time series and replace them
 by their maximal value. This box will be only available if
-input$radioEvdStatistics == "GP" and else will be NULL.}
+\code{radioEvdStatistics} equals \code{"GP"} and else will be
+\code{NULL}.}
 
 \item{selectDeseasonalize}{Character (select) input determining
 which deseasonalization method should be used to remove the
@@ -94,24 +99,25 @@ block length used in the GEV flavor of extreme value theory. On
 default it is set to one year.}
 
 \item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+data source. It is either of one of the names of the provided
+list in the \code{list.data.sources} argument of the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive} object containing random numbers
+drawn from the distribution specified using
+\code{radioEvdStatistics}. Default = a random element of
+the provided input.}
 
 \item{climex.environment}{Environment containing the global
-variables used within the climex app. Namely the last values
-displayed in the table and the lists containing the station
-data.}
+variables used within the \code{climex} app. Namely the last
+values displayed in the table and the lists containing the
+station data.}
 }
 \value{
 Reactive value holding the selected station.
 }
 \description{
-Leaflet interfaces to select stations or visualize
+Leaflet interface to select stations or visualize
   spacial information.
 }
 \details{
@@ -119,10 +125,10 @@ This module provides an interactive map to display the
   locations of the individual stations. The user can choose
   individual stations by clicking at them. In addition a dialog
   will pop up telling the stations name, the length of the
-  time series and the 20, 50 and 100 year return level calculated
-  with the setting in the basic map without station positions        
-  select only those stations in Germany with a certain minimum
-  number of years.
+  time series, and the 20, 50, and 100 year return level
+  calculated with the setting in the basic map without station
+  positions select only those stations in Germany with a certain
+  minimum number of years.
 }
 \seealso{
 Other leaflet: \code{\link{data.chosen}},

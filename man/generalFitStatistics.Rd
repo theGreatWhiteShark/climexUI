@@ -2,19 +2,21 @@
 % Please edit documentation in R/climex_fitting.R
 \name{generalFitStatistics}
 \alias{generalFitStatistics}
-\title{Result table in Climex app}
+\title{Table holding the results in the \code{climex} app}
 \usage{
 generalFitStatistics(reactive.fitting, reactive.extreme, sliderThreshold,
   buttonMinMax, radioEvdStatistics, color.table, climex.environment)
 }
 \arguments{
 \item{reactive.fitting}{Reactive value containing the results of
-the fit (\code{\link{fit.gev}} or \code{\link{fit.gpd}}
-depending on radioEvdStatistic) to the blocked time series in
-reactive.extreme()[[ 1 ]].}
+the fit (\code{\link[climex]{fit.gev}} or
+\code{\link[climex]{fit.gpd}} depending on
+\code{radioEvdStatistic}) to the blocked time series in 
+in the first element of the list returned by
+\code{\link{data.extremes}}.}
 
 \item{reactive.extreme}{Reactive value containing a list of the
-extracted extreme events of a time series, the deseasonalized
+extracted extreme events of a time series, the deseasonalized,
 and the pure version of this very time series. All three
 elements are provided as class \pkg{xts}.}
 
@@ -26,18 +28,18 @@ end point.}
 
 \item{buttonMinMax}{Character (radio) input determining whether
 the GEV/GP distribution shall be fitted to the smallest or
-biggest vales. Choices: c( "Max", "Min ), default = "Max".}
+biggest values. Choices: c( "Max", "Min ), default = "Max".}
 
 \item{radioEvdStatistics}{Character (radio) input determining
 whether the GEV or GP distribution shall be fitted to the
 data. Choices: c( "GEV", "GP" ), default = "GEV".}
 
 \item{color.table}{Function adding color to the table constructed
-within generalFitStatistics. It will replace some placeholders
-by color tags. \code{\link{color.table}}}
+within \code{\link{generalFitStatistics}}. It will replace some
+placeholders by color tags. See \code{\link{color.table}}.}
 
 \item{climex.environment}{Environment containing the global
-variables used within the climex app. Namely the last values
+variables used within the \code{climex} app. Namely the last values
 displayed in the table and the lists containing the station
 data.}
 }
@@ -45,16 +47,18 @@ data.}
 renderUI containing a table
 }
 \description{
-Table to display the results of the GEV/GP fitting
+Table to display  the results of the  GEV/GP fitting
   procedure.
 }
 \details{
-Displaying of the AIC, nllh, BIC and fitted parameters as
-  well as the difference to the three last fits! (and highlight
-  positive values with with green and negative with red). This
-  function will define some global variables to hold the results
-  of the former fits. This is necessary in order to mark the
-  progress in green or red.
+Displaying  of the  Akaike information  criterion (AIC),
+  negative log-likelihood  (nllh), Bayesien  information criterion
+  (BIC),  and  the  fitted  GEV/GP   parameters  as  well  as  the
+  difference   between   their   most  recent   and   last   three
+  values. Positive values are highlighted in green and negative in
+  red color.  This function will  define some global  variables to
+  hold the results of the former  fits. This is necessary in order
+  to mark the progress in green or red.
 }
 \seealso{
 Other climex-fitting: \code{\link{color.table}},

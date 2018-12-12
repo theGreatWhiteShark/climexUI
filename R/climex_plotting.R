@@ -1,14 +1,14 @@
-### All functions and modules related to the plots in the General tab
+### All functions and modules related to the plots in the General tab.
 
-##' @title Time series plot in the Climex app.
-##' @description TabBox containing a plot of the pure and
-##'   deseasonalized time series as well as one of all its extreme
-##'   events. 
-##' @details This function provides the ouput to
+##' @title Time series plot in the \code{climex} app.
+##' @description \code{\link[shinydashboard]{tabBox}} containing a plot of the
+##'   pure and deseasonalized time series as well as one of all its
+##'   extreme events. 
+##' @details This function provides the output corresponding to
 ##'   \code{\link{generalTimeSeriesPlot}}. Both the pure time series
 ##'   and the deseasonalized one are rendered using the \pkg{dygraphs}
 ##'   package. The extreme events are rendered using the \pkg{ggplot2}
-##'   package. 
+##'   package.
 ##'
 ##' @param id Namespace prefix
 ##'
@@ -18,7 +18,7 @@
 ##' @importFrom shinydashboard tabBox
 ##' @importFrom dygraphs dygraphOutput
 ##'
-##' @return tabBox
+##' @return \code{\link[shinydashboard]{tabBox}}
 ##' @author Philipp Mueller 
 generalTimeSeriesPlotOutput <- function( id ){
   ## Create a namespace function using the provided id
@@ -42,13 +42,13 @@ generalTimeSeriesPlotOutput <- function( id ){
       height = 370 )
 }
 
-##' @title Time series plot in the Climex app.
-##' @description TabBox containing a plot of the pure and
-##'   deseasonalized time series as well as one of all its extreme
-##'   events. 
+##' @title Time series plot in the \code{climex} app.
+##' @description \code{\link[shinydashboard]{tabBox}} containing a plot of the
+##'   pure and deseasonalized time series as well as one of all its
+##'   extreme events.
 ##' @details Both the pure time series and the deseasonalized one are
-##'   rendered using the dygraphs package. The extreme events are
-##'   rendered using the \pkg{ggplot2} package. For the later one
+##'   rendered using the \pkg{dygraphs} package. The extreme events
+##'   are rendered using the \pkg{ggplot2} package. For the later one
 ##'   clicking or brushing points enables the user to exclude
 ##'   them. This is handled by a reactive value returned by this
 ##'   function.
@@ -60,22 +60,22 @@ generalTimeSeriesPlotOutput <- function( id ){
 ##' @param reactive.extreme Reactive value returning a list containing
 ##'   three elements: 1. the blocked time series, 2. the
 ##'   deseasonalized time series, and 3. the pure time series.
-##' @param selectDataBase  Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
+##' @param selectDataBase Character (select) input to determine the
+##'   data source. It is either of one of the names of the provided
+##'   list in the \code{list.data.sources} argument of the
+##'   \code{\link{climex}} function or \emph{Artificial data}. In case
+##'   of the latter choice, the function \code{\link{data.selection}}
+##'   will provide a \emph{reactive} object containing random numbers
+##'   drawn from the distribution specified using
+##'   \code{radioEvdStatistics}. Default = a random element of
+##'   the provided input.
 ##' @param selectDataType Character (select) input to determine which
 ##'   set of measurements should be used. This choice is important if
 ##'   the input of the \code{\link{climex}} function was not just a
 ##'   list of different station data, but a list of such lists. This
 ##'   additional layer of lists can e.g. represent different types of
 ##'   measurement data like precipitation and temperature. Their names
-##'   are derived from the names of the input list (see \code{link{
-##'   menuSelectDataType}}).
+##'   are derived from the names of the input list.
 ##' @param radioEvdStatistics Character (radio) input determining
 ##'   whether the GEV or GP distribution shall be fitted to the
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
@@ -86,7 +86,7 @@ generalTimeSeriesPlotOutput <- function( id ){
 ##'   end point. 
 ##' @param buttonMinMax Character (radio) input determining whether
 ##'   the GEV/GP distribution shall be fitted to the smallest or
-##'   biggest vales. Choices: c( "Max", "Min ), default = "Max".
+##'   biggest values. Choices: c( "Max", "Min ), default = "Max".
 ##'
 ##' @family climex-plot
 ##'
@@ -173,11 +173,6 @@ generalTimeSeriesPlot <- function( input, output, session,
     y.label <- selectDataBase()
     bind.dy <- cbind( x.data[[ 3 ]], plot.extremes )
     names( bind.dy ) <- c( "pure ts", "annual maxima" )
-    if ( class( y.label ) == "expression" ){
-      ## dygraphs is not able to handle neither expressions nor
-      ## MathJax 
-      y.label <- "temperature in &deg;C"
-    }
     dygraph( bind.dy, ylab = y.label ) %>%
       dySeries( "pure ts", color = colour.ts ) %>%
       dySeries( "annual maxima", color = colour.extremes,
@@ -198,12 +193,6 @@ generalTimeSeriesPlot <- function( input, output, session,
     y.label <- selectDataBase()
     bind.dy <- cbind( x.data[[ 2 ]], plot.extremes )
     names( bind.dy ) <- c( "deseasonalized ts", "annual maxima" )
-    print( y.label )
-    if ( class( y.label ) == "expression" ){
-      ## dygraphs is not able to handle neither expressions nor
-      ## MathJax
-      y.label <- "temperature in &deg;C"
-    }
     dygraph( bind.dy, ylab = y.label ) %>%
       dySeries( "deseasonalized ts", color = colour.ts ) %>%
       dySeries( "annual maxima", color = colour.extremes,
@@ -248,9 +237,9 @@ generalTimeSeriesPlot <- function( input, output, session,
   return( reactive.rows )
 }
 
-##' @title Plot of the fits in the Climex app
-##' @description Box containing the plot of the performed GEV/GP
-##'   fitting as well as three goodness-of-fit plots.
+##' @title Plot of the fits in the \code{climex} app
+##' @description \code{\link[shinydashboard]{box}} containing the plot of the
+##'   performed GEV/GP fit as well as three goodness-of-fit plots.
 ##' @details This function provides the ouput to
 ##'   \code{\link{generalFitPlot}}. All four plots are rendered using
 ##'   the \pkg{ggplot2} package.
@@ -262,7 +251,7 @@ generalTimeSeriesPlot <- function( input, output, session,
 ##' @import shiny
 ##' @importFrom shinydashboard box
 ##'
-##' @return tabBox
+##' @return \code{\link[shinydashboard]{box}}
 ##' @author Philipp Mueller 
 generalFitPlotOutput <- function( id ){
   # Create a namespace function using the provided id
@@ -276,9 +265,9 @@ generalFitPlotOutput <- function( id ){
              plotOutput( ns( "plotFitReturnLevel" ), height = 140 ) ) )
 }
 
-##' @title Plot of the fits in the Climex app
-##' @description Box containing the plot of the performed GEV/GP
-##'   fitting as well as three goodness-of-fit plots.
+##' @title Plot of the fits in the \code{climex} app
+##' @description \code{\link[shinydashboard]{box}} containing the plot of the
+##'   performed GEV/GP fit as well as three goodness-of-fit plots.
 ##' @details All four plots are rendered using the \pkg{ggplot2}
 ##'   package. 
 ##' @param input Namespace input. For more details check out
@@ -290,33 +279,35 @@ generalFitPlotOutput <- function( id ){
 ##'   deseasonalized time series, and 3. the pure time series.
 ##' @param reactive.rows Reactive value holding a logical vector
 ##'   indicating which values of the time series provided by
-##'   \code{\link{data.extremes}} to use after clicking and brushing.   
+##'   \code{\link{data.extremes}} to use after clicking and brushing.
 ##' @param reactive.fitting Reactive value containing the results of
-##'   the fit (\code{\link{fit.gev}} or \code{\link{fit.gpd}}
-##'   depending on radioEvdStatistic) to the blocked time series in
-##'   reactive.extreme()[[ 1 ]].
+##'   the fit (\code{\link[climex]{fit.gev}} or
+##'   \code{\link[climex]{fit.gpd}} depending on
+##'   \code{radioEvdStatistic}) to the blocked time series in 
+##'   in the first element of the list returned by
+##'   \code{\link{data.extremes}}.
 ##' @param buttonMinMax Character (radio) input determining whether
 ##'   the GEV/GP distribution shall be fitted to the smallest or
-##'   biggest vales. Choices: c( "Max", "Min ), default = "Max".
+##'   biggest values. Choices: c( "Max", "Min ), default = "Max".
 ##' @param radioEvdStatistics Character (radio) input determining
 ##'   whether the GEV or GP distribution shall be fitted to the
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
-##' @param selectDataBase  Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
+##' @param selectDataBase Character (select) input to determine the
+##'   data source. It is either of one of the names of the provided
+##'   list in the \code{list.data.sources} argument of the
+##'   \code{\link{climex}} function or \emph{Artificial data}. In case
+##'   of the latter choice, the function \code{\link{data.selection}}
+##'   will provide a \emph{reactive} object containing random numbers
+##'   drawn from the distribution specified using
+##'   \code{radioEvdStatistics}. Default = a random element of
+##'   the provided input.
 ##' @param selectDataType Character (select) input to determine which
 ##'   set of measurements should be used. This choice is important if
 ##'   the input of the \code{\link{climex}} function was not just a
 ##'   list of different station data, but a list of such lists. This
 ##'   additional layer of lists can e.g. represent different types of
 ##'   measurement data like precipitation and temperature. Their names
-##'   are derived from the names of the input list (see \code{link{
-##'   menuSelectDataType}}).
+##'   are derived from the names of the input list.
 ##' @param sliderThreshold Numerical (slider) input determining the
 ##'   threshold used within the GP fit and the extraction of the
 ##'   extreme events. Boundaries: minimal and maximal value of the
@@ -329,7 +320,7 @@ generalFitPlotOutput <- function( id ){
 ##' @import climex
 ##' @import ggplot2
 ##'
-##' @return Nothing in particular.
+##' @return Either \code{NULL} or the last \pkg{ggplot2} plot.
 ##' @author Philipp Mueller 
 generalFitPlot <- function( input, output, session, reactive.extreme,
                            reactive.rows, reactive.fitting,

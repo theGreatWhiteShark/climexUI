@@ -2,23 +2,25 @@
 % Please edit documentation in R/climex_preprocessing.R
 \name{cleaning.interactive}
 \alias{cleaning.interactive}
-\title{Cleaning data in the Climex app}
+\title{Cleaning data in the \code{climex} app}
 \usage{
 cleaning.interactive(x.xts, checkboxIncompleteYears, checkboxDecluster,
   sliderThreshold)
 }
 \arguments{
-\item{x.xts}{Time series of class 'xts' which has to be cleaned.}
+\item{x.xts}{Time series of class \pkg{xts} which has to be cleaned.}
 
 \item{checkboxIncompleteYears}{Logical (checkbox) input
 determining whether to remove all incomplete years of a time
 series. This box will be only available if
-input$radioEvdStatistics == "GEV" and else will be NULL.}
+\code{radioEvdStatistics} equals \code{"GEV"} and else will be
+\code{NULL}.}
 
 \item{checkboxDecluster}{Logical (checkbox) input determining
-whether to remove all clusters in a time series and replace them
-by their maximal value. This box will be only available if
-input$radioEvdStatistics == "GP" and else will be NULL.}
+whether to remove all clusters in a time series and to replace
+them by their maximal value. This box will be only available if
+\code{radioEvdStatistics} equals \code{"GP"} and else will be
+\code{NULL}.}
 
 \item{sliderThreshold}{Numerical (slider) input determining the
 threshold used within the GP fit and the extraction of the
@@ -30,12 +32,12 @@ end point.}
 Time series of class \pkg{xts}.
 }
 \description{
-Function to get rid of artifacts within the Climex
-  app
+Function  to  get   rid  of  artifacts  within  the
+  \code{climex} app.
 }
 \details{
-It removes all incomplete years (GEV) or cluster
-  (GP) when the corresponding checkbox is checked.
+It removes  all incomplete years  (GEV) or  cluster (GP)
+  when the corresponding checkbox is checked.
 }
 \seealso{
 Other preprocessing: \code{\link{data.extremes}},

@@ -2,12 +2,12 @@
 % Please edit documentation in R/climex_preprocessing.R
 \name{generalExtremeExtractionInput}
 \alias{generalExtremeExtractionInput}
-\title{Extracting extreme events in the Climex app}
+\title{Extracting extreme events in the \code{climex} app}
 \usage{
 generalExtremeExtractionInput()
 }
 \value{
-menuItemOutput
+\code{\link[shinydashboard]{menuItemOutput}}
 }
 \description{
 Extract the extreme events from a given time series.

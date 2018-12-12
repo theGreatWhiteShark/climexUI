@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_sidebar.R
 \name{data.selection}
 \alias{data.selection}
-\title{Data selection in the Climex app}
+\title{Data selection in the \code{climex} app}
 \usage{
 data.selection(reactive.chosen, selectDataSource, selectDataBase,
   sliderThreshold, radioEvdStatistics, sliderArtificialDataLocation,
@@ -11,22 +11,21 @@ data.selection(reactive.chosen, selectDataSource, selectDataBase,
 }
 \arguments{
 \item{reactive.chosen}{Reactive value containing a list of the
-list of all provided stations and a data.frame containing the
-meta data.}
+list of all provided stations and a \code{data.frame} containing
+the meta data.}
 
-\item{selectDataSource}{Menu output in the sidebar. Since this
-function should only be triggered when selectDataBase equals
-"DWD", this input will be a character string describing the
-selected station's name.}
+\item{selectDataSource}{Menu output in the sidebar. It is a
+\code{character string} describing the selected station's name.}
 
 \item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+data source. It is either of one of the names of the provided
+list in the \code{list.data.sources} argument of the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive} object containing random numbers
+drawn from the distribution specified using
+\code{radioEvdStatistics}. Default = a random element of
+the provided input.}
 
 \item{sliderThreshold}{Numerical (slider) input determining the
 threshold used within the GP fit and the extraction of the
@@ -40,45 +39,45 @@ data. Choices: c( "GEV", "GP" ), default = "GEV".}
 
 \item{sliderArtificialDataLocation}{Numerical (slider) input
 providing the location parameter to generate an artificial time
-series. For input$radioEvdStatistics == "GP" or
-input$selectDataBase != "Artificial data" this argument will be
-NULL.}
+series. If \code{radioEvdStatistics} equals \code{"GP"} or
+\code{selectDataBase} does not equal \code{"Artificial data"},
+this argument will be \code{NULL}.}
 
 \item{sliderArtificialDataScale}{Numerical (slider) input
 providing the scale parameter to generate an artificial time
-series. For input$selectDataBase != "Artificial data" this
-argument will be NULL.}
+series. If \code{selectDataBase} does not equal
+\code{"Artificial data"}, this argument will be \code{NULL}.}
 
 \item{sliderArtificialDataShape}{Numerical (slider) input
 providing the shape parameter to generate an artificial time
-series. For input$selectDataBase != "Artificial data" this
-argument will be NULL.}
+series. If \code{selectDataBase} does not equal\code{"Artificial
+data"}, this argument will be \code{NULL}.}
+
+\item{reactive.redrawing}{Reactive event triggering whenever the
+user presses the \emph{Draw} button displayed when
+\code{"Artificial data"}' is chosen in \code{selectDataBase}. If
+not chosen, this button will not be defined.}
 
 \item{sliderSeriesLength}{Numerical slider determining the length
 of an artificial time series. This one will only be present when
-selectDataBase is set to "Artificial data".}
-
-\item{buttonDrawTS}{Action button used to draw a time series when
-'artificial data' is chosen in selectDataBase(). If not chosen,
-this button will not be defined.}
+\code{selectDataBase} is set to \code{"Artificial data"}.}
 }
 \value{
-Reactive value containing a 'xts' class time series.
+Reactive value containing a \pkg{xts} class time series.
 }
 \description{
 Reactive value selecting an individual time series.
 }
 \details{
-According to the choice in input$selectDataBase an
+According to the choice in \code{selectDataBase} an
   artificial time series will be sampled or one from a database
   will be selected. For the latter one the reactive value
   \code{\link{data.chosen}} will be constulted. The length of
   the generated time series is determined by the
-  input$sliderSeriesLength.
+  \code{sliderSeriesLength}.
 }
 \seealso{
-Other sidebar: \code{\link{file.loading}},
-  \code{\link{sidebarCleaningInput}},
+Other sidebar: \code{\link{sidebarCleaningInput}},
   \code{\link{sidebarCleaning}},
   \code{\link{sidebarDataBaseInput}},
   \code{\link{sidebarDataBase}},

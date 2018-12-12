@@ -2,22 +2,23 @@
 % Please edit documentation in R/climex_sidebar.R
 \name{sidebarSeriesLength}
 \alias{sidebarSeriesLength}
-\title{Series length in the Climex app}
+\title{Series length in the \code{climex} app}
 \usage{
 sidebarSeriesLength(selectDataBase)
 }
 \arguments{
 \item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+data source. It is either of one of the names of the provided
+list in the \code{list.data.sources} argument of the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive} object containing random numbers
+drawn from the distribution specified using
+\code{radioEvdStatistics}. Default = a random element of
+the provided input.}
 }
 \value{
-menuItemOutput
+\code{\link[shinydashboard]{menuItemOutput}}
 }
 \description{
 Slider to determine the length of an artificial time
@@ -25,11 +26,10 @@ Slider to determine the length of an artificial time
 }
 \details{
 Numerical slider which will only be displayed when
-"Artificial data" is selected in input$selectDataBase.
+\code{"Artificial data"} is selected in \code{selectDataBase}.
 }
 \seealso{
 Other sidebar: \code{\link{data.selection}},
-  \code{\link{file.loading}},
   \code{\link{sidebarCleaningInput}},
   \code{\link{sidebarCleaning}},
   \code{\link{sidebarDataBaseInput}},

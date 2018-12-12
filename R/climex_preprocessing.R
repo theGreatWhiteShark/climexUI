@@ -1,7 +1,7 @@
 ## Mostly functions associated with preprocessing the individual time
 ### series. Most of those steps can be controlled via the General tab
 
-##' @title Extracting extreme events in the Climex app
+##' @title Extracting extreme events in the \code{climex} app
 ##' @description Extract the extreme events from a given time series.
 ##' @details Provides the \code{\link[shinydashboard]{menuItemOutput}}
 ##'   for \code{\link{generalExtremeExtraction}}. See the later one
@@ -11,13 +11,13 @@
 ##'
 ##' @family preprocessing
 ##'
-##' @return menuItemOutput
+##' @return \code{\link[shinydashboard]{menuItemOutput}}
 ##' @author Philipp Mueller 
 generalExtremeExtractionInput <- function(){
   menuItemOutput( "generalExtremeExtraction" )
 }
 
-##' @title Extracting extreme events in the Climex app
+##' @title Extracting extreme events in the \code{climex} app
 ##' @description Extract the extreme events from a given time series.
 ##' @details Provides a slider input to determine either the block
 ##'   length (in case of the GEV distribution) or the height of the
@@ -26,34 +26,35 @@ generalExtremeExtractionInput <- function(){
 ##'   whether the GEV or GP distribution shall be fitted to the
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
 ##' @param deseasonalize.interactive Function used to remove
-##'   seasonality from a given time
-##'   series. \code{\link{deseasonalize.interactive}}
+##'   seasonality from a given time series. See
+##'   \code{\link{deseasonalize.interactive}}
 ##' @param selectDeseasonalize Character (select) input determining
 ##'   which deseasonalization method should be used to remove the
-##'   short-range correlations from the provided time series.
-##'   \code{\link{deseasonalizeSelectionInput}}
+##'   short-range correlations from the provided time series. See
+##'   \code{\link{deseasonalizeSelectionInput}}.
 ##' @param buttonMinMax Character (radio) input determining whether
 ##'   the GEV/GP distribution shall be fitted to the smallest or
-##'   biggest vales. Choices: c( "Max", "Min ), default = "Max".
+##'   biggest values. Choices: c( "Max", "Min ), default = "Max".
 ##' @param reactive.selection Reactive value contains the class
 ##'   \pkg{xts} time series of the selected input or artificially
 ##'   generated data chosen via the sidebar or the leaflet
 ##'   map. \code{\link{data.selection}}
-##' @param selectDataBase  Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
+##' @param selectDataBase Character (select) input to determine the
+##'   data source. It is either of one of the names of the provided
+##'   list in the \code{list.data.sources} argument of the
+##'   \code{\link{climex}} function or \emph{Artificial data}. In case
+##'   of the latter choice, the function \code{\link{data.selection}}
+##'   will provide a \emph{reactive} object containing random numbers
+##'   drawn from the distribution specified using
+##'   \code{radioEvdStatistics}. Default = a random element of
+##'   the provided input.
 ##' 
 ##' @import shiny
 ##' @import climex
 ##'
 ##' @family preprocessing
 ##'
-##' @return renderMenu
+##' @return \code{\link[shinydashboard]{renderMenu}}
 ##' @author Philipp Mueller
 generalExtremeExtraction <- function( radioEvdStatistics,
                                      deseasonalize.interactive,
@@ -61,7 +62,6 @@ generalExtremeExtraction <- function( radioEvdStatistics,
                                      buttonMinMax, reactive.selection,
                                      selectDataBase ){
   renderMenu( {
-    print( "* in generalExtremeExtraction" )
     x.xts <- reactive.selection()
     if ( !is.null( radioEvdStatistics() ) &&
          radioEvdStatistics() == "GEV" ){
@@ -105,21 +105,23 @@ generalExtremeExtraction <- function( radioEvdStatistics,
   } )
 }
 
-##' @title Cleaning data in the Climex app
-##' @description Function to get rid of artifacts within the Climex
-##'   app
-##' @details It removes all incomplete years (GEV) or cluster
-##'   (GP) when the corresponding checkbox is checked.
+##' @title Cleaning data in the \code{climex} app
+##' @description  Function  to  get   rid  of  artifacts  within  the
+##'   \code{climex} app.
+##' @details  It removes  all incomplete years  (GEV) or  cluster (GP)
+##'   when the corresponding checkbox is checked.
 ##'
-##' @param x.xts Time series of class 'xts' which has to be cleaned.
+##' @param x.xts Time series of class \pkg{xts} which has to be cleaned.
 ##' @param checkboxIncompleteYears Logical (checkbox) input
 ##'   determining whether to remove all incomplete years of a time
 ##'   series. This box will be only available if
-##'   input$radioEvdStatistics == "GEV" and else will be NULL.
+##'   \code{radioEvdStatistics} equals \code{"GEV"} and else will be
+##'   \code{NULL}.
 ##' @param checkboxDecluster Logical (checkbox) input determining
-##'   whether to remove all clusters in a time series and replace them
-##'   by their maximal value. This box will be only available if
-##'   input$radioEvdStatistics == "GP" and else will be NULL.
+##'   whether to remove all clusters in a time series and to replace
+##'   them by their maximal value. This box will be only available if
+##'   \code{radioEvdStatistics} equals \code{"GP"} and else will be
+##'   \code{NULL}.
 ##' @param sliderThreshold Numerical (slider) input determining the
 ##'   threshold used within the GP fit and the extraction of the
 ##'   extreme events. Boundaries: minimal and maximal value of the
@@ -134,7 +136,6 @@ generalExtremeExtraction <- function( radioEvdStatistics,
 ##' @author Philipp Mueller 
 cleaning.interactive <- function( x.xts, checkboxIncompleteYears,
                                  checkboxDecluster, sliderThreshold ){
-  print( "* in cleaning.interactive" )
   x.xts[ which( is.na( x.xts ) ) ] <- NaN
   x.xts[ which( x.xts == -999 ) ] <- NaN
   if ( !is.null( checkboxIncompleteYears() ) &&
@@ -151,27 +152,28 @@ cleaning.interactive <- function( x.xts, checkboxIncompleteYears,
   return( x.xts )
 }
 
-##' @title Minimum or maximum extremes in the Climex app
+##' @title Minimum or maximum extremes in the \code{climex} app
 ##' @description Whether to determine the minimal or maximal extremes.
-##' @details Not a real shiny module, since I have to use this select
-##'   input outside its namespace. Provides the
-##'   \code{\link[shinydashboard]{menuItemOutput}} for
+##' @details Not  a real \pkg{shiny} module, since I  have to use this
+##'   select    input   outside    its    namespace.   Provides    the
+##'   \code{\link[shinydashboard]{menuItemOutput}}                 for
 ##'   \code{\link{generalButtonMinMaxInput}}
 ##'  
 ##' @importFrom shinydashboard menuItemOutput
 ##'
 ##' @family preprocessing
 ##'
-##' @return menuItemOutput
+##' @return \code{\link[shinydashboard]{menuItemOutput}}
 ##' @author Philipp Mueller 
 generalButtonMinMaxInput <- function(){
   uiOutput( "generalButtonMinMax" )
 }
-##' @title Minimum or maximum extremes in the Climex app
+##' @title Minimum or maximum extremes in the \code{climex} app
 ##' @description Whether to determine the minimal or maximal extremes.
-##' @details Not a real shiny module, since I have to use this select
-##'   input outside its namespace. Only when input$radioEvdStatistics
-##'   is set of "GEV" the minimal extremes scan be used.
+##' @details  Not a real \pkg{shiny}  module since I have  to use this
+##'   select    input    outside     its    namespace.    Only    when
+##'   \code{radioEvdStatistics}  is set  to  \code{"GEV"} the  minimal
+##'   extremes scan be used.
 ##' 
 ##' @param radioEvdStatistics Character (radio) input determining
 ##'   whether the GEV or GP distribution shall be fitted to the
@@ -182,18 +184,16 @@ generalButtonMinMaxInput <- function(){
 ##'   list of different station data, but a list of such lists. This
 ##'   additional layer of lists can e.g. represent different types of
 ##'   measurement data like precipitation and temperature. Their names
-##'   are derived from the names of the input list (see \code{link{
-##'   menuSelectDataType}}).
+##'   are derived from the names of the input list.
 ##' 
 ##' @importFrom shinydashboard menuItemOutput
 ##'
 ##' @family preprocessing
 ##'
-##' @return menuItemOutput
+##' @return \code{\link[shinydashboard]{menuItemOutput}}
 ##' @author Philipp Mueller 
 generalButtonMinMax <- function( radioEvdStatistics, selectDataType ){
   renderUI({
-    print( "* in generalButtonMinMax" )
     ## The minimal extremes are only available when using the GEV
     ## distribution
     if ( is.null( radioEvdStatistics() ) ||
@@ -216,36 +216,37 @@ generalButtonMinMax <- function( radioEvdStatistics, selectDataType ){
   } )
 }
 
-##' @title Removing the seasonality in the Climex app
+##' @title Removing the seasonality in the \code{climex} app
 ##' @description Removing the seasonality.
-##' @details Not a real shiny module, since I have to use this select
-##'   input outside its namespace. Provides the
-##'   \code{\link[shinydashboard]{menuItemOutput}} for
-##'   \code{\link{deseasonalizeSelection}} 
+##' @details Not  a real \pkg{shiny} module, since I  have to use this
+##'   select    input   outside    its    namespace.   Provides    the
+##'   \code{\link[shinydashboard]{menuItemOutput}}                 for
+##'   \code{\link{deseasonalizeSelection}}
 ##' 
 ##' @importFrom shinydashboard menuItemOutput
 ##'
 ##' @family preprocessing
 ##'
-##' @return menuItemOutput
+##' @return \code{\link[shinydashboard]{menuItemOutput}}
 ##' @author Philipp Mueller 
 deseasonalizeSelectionInput <- function(){
   menuItemOutput( "deseasonalizeSelection" )
 }
 
-##' @title Removing the seasonality in the Climex app
+##' @title Removing the seasonality in the \code{climex} app
 ##' @description Removing the seasonality.
-##' @details Not a real shiny module, since I have to use this select
-##' input outside its namespace.
+##' @details Not  a real \pkg{shiny} module, since I  have to use this
+##'   select input outside its namespace.
 ##'
-##' @param selectDataBase  Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
+##' @param  selectDataBase Character  (select) input to  determine the
+##'   data source.  It is either of  one of the names  of the provided
+##'   list   in   the   \code{list.data.sources}   argument   of   the
+##'   \code{\link{climex}} function or \emph{Artificial data}. In case
+##'   of the latter  choice, the function \code{\link{data.selection}}
+##'   will provide a \emph{reactive}  object containing random numbers
+##'   drawn     from     the      distribution     specified     using
+##'   \code{radioEvdStatistics}. Default =  a random element of
+##'   the provided input.
 ##' 
 ##' @import shiny
 ##'
@@ -258,7 +259,7 @@ deseasonalizeSelection <- function( selectDataBase ){
     if ( selectDataBase() == "Artificial data" ){
       ## Since the artificial data will be sampled directly from a
       ## GEV/GP distribution, there is no point for blocking or
-      ## thresholding
+      ## thresholding.
       return( div( id = "aux-placeholder", style = "height: 0px;" ) )
     }
     selectInput( "selectDeseasonalize", "Deseasonalization method",
@@ -268,34 +269,36 @@ deseasonalizeSelection <- function( selectDataBase ){
   })
 }
 
-##' @title Removing seasonality in the Climex app
+##' @title Removing seasonality in the \code{climex} app
 ##' @description Function for removing the seasonality of a given time
-##'   series within the Climex app.
+##'   series within the \code{climex} app.
 ##'
-##' @param x.xts Time series of class 'xts' which has to be cleaned.
-##' @param selectDeseasonalize Character (select) input determining
-##'   which deseasonalization method should be used to remove the
-##'   short-range correlations from the provided time series.
-##' \code{\link{deseasonalizeSelectionInput}}. If NULL
-##'   \code{\link{anomalies}} will be used.
-##' @param selectDataBase  Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
+##' @param  x.xts Time  series of  class \pkg{xts},  which has  to be
+##'   cleaned.
+##' @param   selectDeseasonalize  \code{Character}   (select)  input
+##'   determining, which  deseasonalization method  should be  used to
+##'   remove  the  short-range  correlations from  the  provided  time
+##'   series.       \code{\link{deseasonalizeSelectionInput}}.      If
+##'   \code{NULL} \code{\link{anomalies}} will be used.
+##' @param  selectDataBase Character  (select) input to  determine the
+##'   data source.  It  is either of one of the  names of the provided
+##'   list   in   the   \code{list.data.sources}   argument   of   the
+##'   \code{\link{climex}} function or \emph{Artificial data}. In case
+##'   of the latter  choice, the function \code{\link{data.selection}}
+##'   will provide a \emph{reactive}  object containing random numbers
+##'   drawn     from     the      distribution     specified     using
+##'   \code{radioEvdStatistics}. Default =  a random element of
+##'   the provided input.
 ##'
 ##' @family preprocessing
 ##'
 ##' @import climex
+##' @importFrom zoo index
 ##'
-##' @return Time series of class 'xts'.
+##' @return Time series of class \pkg{xts}.
 ##' @author Philipp Mueller 
 deseasonalize.interactive <- function( x.xts, selectDeseasonalize,
                                       selectDataBase ){
-  print( "* in deseasonalize.interactive" )
     if ( is.null( x.xts ) ||
          is.null( selectDataBase() ) ){
       ## if the initialization has not finished yet just wait a little
@@ -383,18 +386,19 @@ deseasonalize.interactive <- function( x.xts, selectDeseasonalize,
     return( x.deseasonalized )
 }
 
-##' @title Extracting extreme events in the Climex app
-##' @description Function to extract the extreme event from a time
-##'   series. 
-##' @details If the input$radioEvdStatistics is set to "GEV" the time
-##'   series will be block. If it's on the other hand set to "GP", all
-##'   values above a certain threshold will be extracted.
+##' @title Extracting extreme events in the \code{climex} app
+##' @description  Function to  extract the extreme  event from  a time
+##'   series.
+##' @details If \code{radioEvdStatistics}  is set to \code{"GEV"}, the
+##'   time series  will be  block. If  it's on the  other hand  set to
+##'   \code{"GP"}, all values above a threshold \code{sliderThreshold}
+##'   will be extracted.
 ##' 
 ##' @param x.xts Time series of class \pkg{xts} which has to be
 ##'   cleaned.
 ##' @param buttonMinMax Character (radio) input determining whether
 ##'   the GEV/GP distribution shall be fitted to the smallest or
-##'   biggest vales. Choices: c( "Max", "Min ), default = "Max".
+##'   biggest values. Choices: c( "Max", "Min ), default = "Max".
 ##' @param radioEvdStatistics Character (radio) input determining
 ##'   whether the GEV or GP distribution shall be fitted to the
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
@@ -407,9 +411,10 @@ deseasonalize.interactive <- function( x.xts, selectDeseasonalize,
 ##'   deseasonalized time series (rounded). Default: 0.8* the upper
 ##'   end point. 
 ##' @param checkboxDecluster Logical (checkbox) input determining
-##'   whether to remove all clusters in a time series and replace them
-##'   by their maximal value. This box will be only available if
-##'   input$radioEvdStatistics == "GP" and else will be NULL.
+##'   whether to remove all clusters in a time series and to replace
+##'   them by their maximal value. This box will be only available if
+##'   \code{radioEvdStatistics} equals \code{"GP"} and else will be
+##'   \code{NULL}.
 ##'
 ##' @family preprocessing
 ##'
@@ -420,7 +425,6 @@ deseasonalize.interactive <- function( x.xts, selectDeseasonalize,
 extremes.interactive <- function( x.xts, buttonMinMax,
                                  radioEvdStatistics, sliderBlockLength,
                                  sliderThreshold, checkboxDecluster ){
-  print( "* in extremes.interactive" )
   if ( is.null( buttonMinMax() ) &&
        ( !is.null( sliderBlockLength() ) ||
          !is.null( sliderThreshold() ) ) ){
@@ -468,69 +472,73 @@ extremes.interactive <- function( x.xts, buttonMinMax,
   }
 }
 
-##' @title Extracting extremes in the Climex app
+##' @title Extracting extremes in the \code{climex} app
 ##' @description Reactive value extracting the extreme event of a time
 ##'   series and all input.
-##' @details First this reactive value will use reactive.selection to
-##'   obtain the time series it shall be working on. Afterwards it
-##'   applies both \code{\link{deseasonalize.interactive}} and
-##'   \code{\link{extremes.interactive}} to this time series. Finally
-##'   it return the resulting extreme events as well as the
+##' @details    First     this    reactive    value     will    use
+##'   \code{reactive.selection} to obtain the  time series it shall be
+##'   working      on.       Afterwards,     it      applies      both
+##'   \code{\link{deseasonalize.interactive}}                      and
+##'   \code{\link{extremes.interactive}} to this time series. Finally,
+##'   it  returns  the   resulting  extreme  events  as   well  as  the
 ##'   deseasonalized and pure time series.
-##' @param reactive.selection Reactive value providing a time series
-##'   of class \pkg{xts}. \code{\link{data.selection}}
-##' @param radioEvdStatistics Character (radio) input determining
-##'   whether the GEV or GP distribution shall be fitted to the
+##' @param  reactive.selection Reactive value providing  a time series
+##'   of class \pkg{xts}. See \code{\link{data.selection}}.
+##' @param radioEvdStatistics  Character  (radio) input  determining
+##'   whether  the GEV  or  GP  distribution shall  be  fitted to  the
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
-##' @param sliderBlockLength Numerical (slider) input determining the
-##'   block length used in the GEV flavor of extreme value theory. On
+##' @param sliderBlockLength Numerical  (slider) input determining the
+##'   block length used in the GEV  flavor of extreme value theory. On
 ##'   default it is set to one year.
-##' @param sliderThreshold Numerical (slider) input determining the
-##'   threshold used within the GP fit and the extraction of the
-##'   extreme events. Boundaries: minimal and maximal value of the
-##'   deseasonalized time series (rounded). Default: 0.8* the upper
-##'   end point. 
-##' @param checkboxDecluster Logical (checkbox) input determining
-##'   whether to remove all clusters in a time series and replace them
-##'   by their maximal value. This box will be only available if
-##'   input$radioEvdStatistics == "GP" and else will be NULL.
-##' @param deseasonalize.interactive Function used to remove
-##'   seasonality from a given time
+##' @param  sliderThreshold Numerical  (slider) input  determining the
+##'   threshold  used within  the GP  fit  and the  extraction of  the
+##'   extreme  events. Boundaries:  minimal and  maximal value  of the
+##'   deseasonalized time  series (rounded).  Default: 0.8*  the upper
+##'   end point.
+##' @param checkboxDecluster  Logical  (checkbox) input  determining
+##'   whether to remove  all clusters in a time series  and to replace
+##'   them by their maximal value. This  box will be only available if
+##'   \code{radioEvdStatistics}  equals \code{"GP"}  and else  will be
+##'   \code{NULL}.
+##' @param   deseasonalize.interactive  Function   used  to   remove
+##'   seasonality          from          a         given          time
 ##'   series. \code{\link{deseasonalize.interactive}}
-##' @param selectDeseasonalize Character (select) input determining
-##'   which deseasonalization method should be used to remove the
-##'   short-range correlations from the provided time series.
+##' @param  selectDeseasonalize Character (select)  input determining
+##'   which  deseasonalization method  should  be used  to remove  the
+##'   short-range   correlations  from   the  provided   time  series.
 ##'   \code{\link{deseasonalizeSelectionInput}}
-##' @param selectDataBase  Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
-##' @param buttonMinMax Character (radio) input determining whether
-##'   the GEV/GP distribution shall be fitted to the smallest or
-##'   biggest vales. Choices: c( "Max", "Min ), default = "Max".
+##' @param  selectDataBase Character  (select) input to  determine the
+##'   data source.  It  is either of one of the  names of the provided
+##'   list   in   the   \code{list.data.sources}   argument   of   the
+##'   \code{\link{climex}} function or \emph{Artificial data}. In case
+##'   of the latter  choice, the function \code{\link{data.selection}}
+##'   will provide a \emph{reactive}  object containing random numbers
+##'   drawn     from     the      distribution     specified     using
+##'   \code{radioEvdStatistics}. Default =  a random element of
+##'   the provided input.
+##' @param  buttonMinMax Character  (radio) input  determining whether
+##'   the  GEV/GP distribution  shall  be fitted  to  the smallest  or
+##'   biggest values. Choices: c( "Max", "Min ), default = "Max".
 ##' @param extremes.interactive Function used to split a time series
 ##'   into blocks of equal lengths and to just extract the maximal
 ##'   values from then or to extract all data points above a certain
 ##'   threshold value. Which option is chosen depends of the
-##'   radioEvdStatistic. \code{\link{extremes.interactive}}
+##'   \code{radioEvdStatistic}. See \code{\link{extremes.interactive}}
 ##' @param cleaning.interactive Function used to remove incomplete
 ##'   years from blocked time series or to remove clusters from data
 ##'   above a certain threshold.
 ##' @param checkboxIncompleteYears Logical (checkbox) input
 ##'   determining whether to remove all incomplete years of a time
 ##'   series. This box will be only available if
-##'   input$radioEvdStatistics == "GEV" and else will be NULL.
+##'   \code{radioEvdStatistics} equals \code{"GEV"} and else will be
+##'   \code{NULL}.
 ##'
 ##' @family preprocessing
 ##' 
-##' @return Reactive value containing a names list of the extracted
-##'  extreme events, the deseasonalized and pure time series. All
-##'   three are of class \pkg{xts}.
-##' @author Philipp Mueller 
+##' @return Reactive  value  containing a  named  \code{list} of  the
+##'   extracted  extreme  events,  the deseasonalized  and  pure  time
+##'   series. All three are of class \pkg{xts}.
+##' @author Philipp Mueller
 data.extremes <- function( reactive.selection, radioEvdStatistics,
                           sliderBlockLength, sliderThreshold,
                           checkboxDecluster,
@@ -540,12 +548,10 @@ data.extremes <- function( reactive.selection, radioEvdStatistics,
                           cleaning.interactive,
                           checkboxIncompleteYears ){
   reactive( {
-    print( "* in data.extremes" )
     if ( is.null( reactive.selection() ) ||
          is.null( radioEvdStatistics() ) ){
       ## if the initialization has not finished yet just wait a
       ## little longer
-      print( "Null in data extremes" )
       return( NULL )
     }
     if ( ( radioEvdStatistics() == "GEV" &&
@@ -557,7 +563,6 @@ data.extremes <- function( reactive.selection, radioEvdStatistics,
          ( radioEvdStatistics() == "GP" &&
            buttonMinMax() == "Min" ) ){
       ## Let's wait till the transition is completed
-      print( "Schon ein bisschen weiter in data extremes" )
       return( NULL )
     }
     x.xts <- reactive.selection()

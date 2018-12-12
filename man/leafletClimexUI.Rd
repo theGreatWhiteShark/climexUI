@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_leaflet.R
 \name{leafletClimexUI}
 \alias{leafletClimexUI}
-\title{Leaflet interface in Climex app}
+\title{Leaflet interface of the \code{climex} app}
 \usage{
 leafletClimexUI(id)
 }
@@ -10,18 +10,19 @@ leafletClimexUI(id)
 \item{id}{Namespace prefix}
 }
 \value{
-tagList
+\code{\link[shiny]{tagList}}
 }
 \description{
-Leaflet interfaces to select stations or visualize
+Leaflet  interface to  select stations  or visualize
   spacial information.
 }
 \details{
-This function provides the user interface to
-  \code{\link{leafletClimex}}. It consists of a leafletOutput and
-  two absolutePanels containing the return level and time series
-  length sliders as well as the table displaying all the stations
-  information.
+This   function   provides  the   user  interface   to
+  \code{\link{leafletClimex}}.         It       consists        of
+  \code{\link[leaflet]{leafletOutput}}            and            two
+  \code{\link[shiny]{absolutePanel}} containing  the return level
+  and time series length sliders as well as  the table displaying
+  all the stations information.
 }
 \seealso{
 Other leaflet: \code{\link{data.chosen}},

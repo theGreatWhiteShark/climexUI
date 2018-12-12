@@ -2,19 +2,20 @@
 % Please edit documentation in R/climex_preprocessing.R
 \name{deseasonalizeSelection}
 \alias{deseasonalizeSelection}
-\title{Removing the seasonality in the Climex app}
+\title{Removing the seasonality in the \code{climex} app}
 \usage{
 deseasonalizeSelection(selectDataBase)
 }
 \arguments{
-\item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+\item{selectDataBase}{Character  (select) input to  determine the
+data source.  It is either of  one of the names  of the provided
+list   in   the   \code{list.data.sources}   argument   of   the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter  choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive}  object containing random numbers
+drawn     from     the      distribution     specified     using
+\code{radioEvdStatistics}. Default =  a random element of
+the provided input.}
 }
 \value{
 selectInput
@@ -23,8 +24,8 @@ selectInput
 Removing the seasonality.
 }
 \details{
-Not a real shiny module, since I have to use this select
-input outside its namespace.
+Not  a real \pkg{shiny} module, since I  have to use this
+  select input outside its namespace.
 }
 \seealso{
 Other preprocessing: \code{\link{cleaning.interactive}},

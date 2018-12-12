@@ -1,14 +1,16 @@
-## Contains all modules associated with the leaflet map of the Climex
+### Contains all modules associated with the "Map" tab of the climex
 ### app.
 
-##' @title Leaflet interface in Climex app
-##' @description Leaflet interfaces to select stations or visualize
+##' @title Leaflet interface of the \code{climex} app
+##' @description Leaflet  interface to  select stations  or visualize
 ##'   spacial information.
-##' @details This function provides the user interface to
-##'   \code{\link{leafletClimex}}. It consists of a leafletOutput and
-##'   two absolutePanels containing the return level and time series
-##'   length sliders as well as the table displaying all the stations
-##'   information.
+##' 
+##' @details  This   function   provides  the   user  interface   to
+##'   \code{\link{leafletClimex}}.         It       consists        of
+##'   \code{\link[leaflet]{leafletOutput}}            and            two
+##'   \code{\link[shiny]{absolutePanel}} containing  the return level
+##'   and time series length sliders as well as  the table displaying
+##'   all the stations information.
 ##'
 ##' @param id Namespace prefix
 ##'
@@ -17,7 +19,7 @@
 ##' @import shiny
 ##' @import leaflet
 ##'
-##' @return tagList
+##' @return \code{\link[shiny]{tagList}}
 ##' @author Philipp Mueller 
 leafletClimexUI <- function( id ){
   # Create a namespace function using the provided id
@@ -34,15 +36,15 @@ leafletClimexUI <- function( id ){
                                 "Minimal length [years]",
                                 0, 155, value = 80, step = 1 ),
                     tableOutput( ns( "table" ) ),
-                    ## a plot of height 0? Well, its actually a
-                    ## very nice trick since I need  a width value
-                    ## for the generated pngs in the animation in
-                    ## pixel. But I really want to make app to be
-                    ## rendered nicely on different screen sizes.
-                    ## Via the session$clientData I can access the
-                    ## width and height of plots. Thus I can access
-                    ## the width of this specific box via the
-                    ## plotPlaceholder without seeing it at all.
+                    ## a plot of height 0? Well, its actually a very
+                    ## nice trick since I need a width value for the
+                    ## generated pngs in the animation in pixel. But I
+                    ## really want to make app to be rendered nicely
+                    ## on different screen sizes.  Via the
+                    ## session$clientData I can access the width and
+                    ## height of plots. Thus I can access the width of
+                    ## this specific box via the plotPlaceholder
+                    ## without seeing it at all.
                     plotOutput( ns( "placeholder" ),
                                height = '1px', width = '100%' ) ),
       ## lift it a little but upwards so one can still see the
@@ -62,43 +64,44 @@ leafletClimexUI <- function( id ){
                                  "Calculate return levels" ) ) )
 }
 
-##' @title Leaflet interface in Climex app
-##' @description Leaflet interfaces to select stations or visualize
+##' @title Leaflet interface in the \code{climex} app
+##' @description Leaflet interface to select stations or visualize
 ##'   spacial information.
 ##' @details This module provides an interactive map to display the
 ##'   locations of the individual stations. The user can choose
 ##'   individual stations by clicking at them. In addition a dialog
 ##'   will pop up telling the stations name, the length of the
-##'   time series and the 20, 50 and 100 year return level calculated
-##'   with the setting in the basic map without station positions        
-##'   select only those stations in Germany with a certain minimum
-##'   number of years.
+##'   time series, and the 20, 50, and 100 year return level
+##'   calculated with the setting in the basic map without station
+##'   positions select only those stations in Germany with a certain
+##'   minimum number of years.
 ##'
 ##' @param input Namespace input. For more details check out
 ##'   \url{http://shiny.rstudio.com/articles/modules.html}
 ##' @param output Namespace output.
 ##' @param session Namespace session.
 ##' @param reactive.chosen Reactive value containing a list of the
-##'   list of all provided stations and a data.frame containing the
-##'   meta data. 
+##'   list of all provided stations and a \code{data.frame} containing
+##'   the meta data. 
 ##' @param buttonMinMax Character (radio) input determining whether
 ##'   the GEV/GP distribution shall be fitted to the smallest or
-##'   biggest vales. Choices: c( "Max", "Min ), default = "Max".
+##'   biggest values. Choices: c( "Max", "Min ), default = "Max".
 ##' @param radioEvdStatistics Character (radio) input determining
 ##'   whether the GEV or GP distribution shall be fitted to the
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
 ##' @param sliderYears Numerical (slider) input to determine the
 ##'   minimal length (in years) of the time series to be
-##'   displayed. Minimal value is 0 and maximal is 155 (longest one in
-##'   the DWD database), the default value is 65 and the step width is
-##'   1.
+##'   displayed. Minimal value is 0 and maximal is 155, the default
+##'   value is 65 and the step width is 1.
 ##' @param reactive.extreme Reactive value returning a list containing
 ##'   three elements: 1. the blocked time series, 2. the
-##'   deseasonalized time series, and 3. the pure time series.   
+##'   deseasonalized time series, and 3. the pure time series.
 ##' @param reactive.fitting Reactive value containing the results of
-##'   the fit (\code{\link{fit.gev}} or \code{\link{fit.gpd}}
-##'   depending on radioEvdStatistic) to the blocked time series in
-##'   reactive.extreme()[[ 1 ]].
+##'   the fit (\code{\link[climex]{fit.gev}} or
+##'   \code{\link[climex]{fit.gpd}} depending on
+##'   \code{radioEvdStatistic}) to the blocked time series in 
+##'   in the first element of the list returned by
+##'   \code{\link{data.extremes}}.
 ##' @param sliderThreshold Numerical (slider) input determining the
 ##'   threshold used within the GP fit and the extraction of the
 ##'   extreme events. Boundaries: minimal and maximal value of the
@@ -113,22 +116,26 @@ leafletClimexUI <- function( id ){
 ##'   seasonality from a given time
 ##'   series. \code{\link{deseasonalize.interactive}}
 ##' @param extremes.interactive Function used to split a time series
-##'   into blocks of equal lengths and to just extract the maximal
-##'   values from then or to extract all data points above a certain
+##'   into blocks of equal lengths and to just extract their maximal
+##'   values or to extract all data points above a certain
 ##'   threshold value. Which option is chosen depends of the
-##'   radioEvdStatistic. \code{\link{extremes.interactive}}
+##'   \code{radioEvdStatistic}. See
+##'   \code{\link{extremes.interactive}}.
 ##' @param selectDataSource Menu output in the sidebar. Since this
-##'   function should only be triggered when selectDataBase equals
-##'   "Input", this input will be a character string describing the
-##'   selected station's name.
+##'   function should only be triggered when
+##'   \code{selectDataBase} equals \code{"Input"}, this input
+##'   will be a character string describing the selected station's
+##'   name.
 ##' @param checkboxIncompleteYears Logical (checkbox) input
 ##'   determining whether to remove all incomplete years of a time
 ##'   series. This box  will be only available if
-##'   input$radioEvdStatistics == "GEV" and else will be NULL.
+##'   \code{radioEvdStatistics} equals \code{"GEV"} and else will be
+##'   \code{NULL}.
 ##' @param checkboxDecluster Logical (checkbox) input determining
 ##'   whether to remove all clusters in a time series and replace them
 ##'   by their maximal value. This box will be only available if
-##'   input$radioEvdStatistics == "GP" and else will be NULL.
+##'   \code{radioEvdStatistics} equals \code{"GP"} and else will be
+##'   \code{NULL}.
 ##' @param selectDeseasonalize Character (select) input determining
 ##'   which deseasonalization method should be used to remove the
 ##'   short-range correlations from the provided time series.
@@ -136,24 +143,25 @@ leafletClimexUI <- function( id ){
 ##' @param sliderBlockLength Numerical (slider) input determining the
 ##'   block length used in the GEV flavor of extreme value theory. On
 ##'   default it is set to one year.
-##' @param selectDataBase  Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
+##' @param selectDataBase Character (select) input to determine the
+##'   data source. It is either of one of the names of the provided
+##'   list in the \code{list.data.sources} argument of the
+##'   \code{\link{climex}} function or \emph{Artificial data}. In case
+##'   of the latter choice, the function \code{\link{data.selection}}
+##'   will provide a \emph{reactive} object containing random numbers
+##'   drawn from the distribution specified using
+##'   \code{radioEvdStatistics}. Default = a random element of
+##'   the provided input.
 ##' @param climex.environment Environment containing the global
-##'   variables used within the climex app. Namely the last values
-##'   displayed in the table and the lists containing the station
-##'   data. 
+##'   variables used within the \code{climex} app. Namely the last
+##'   values displayed in the table and the lists containing the
+##'   station data. 
 ##'
 ##' @family leaflet
 ##'
 ##' @import climex
 ##' @import shiny
-##' @import leaflet
+##' @importFrom leaflet addLegend
 ##' 
 ##' @return Reactive value holding the selected station.
 ##' @author Philipp Mueller 
@@ -168,7 +176,6 @@ leafletClimex <- function( input, output, session, reactive.chosen,
                           checkboxIncompleteYears, checkboxDecluster,
                           selectDeseasonalize, sliderBlockLength,
                           selectDataBase, climex.environment ){
-  print( "* in leafletClimex" )
   ## This variable contains the name of the previously selected
   ## station. It's a little bit ugly since it's global, but right now
   ## I'm lacking an alternative.
@@ -176,7 +183,7 @@ leafletClimex <- function( input, output, session, reactive.chosen,
   ## create custom markers.
   ## This is essentially the same marker but with different colors.
   ## The selected one should be colored red and all the others blue. 
-  blue.icon <-  makeIcon(
+  blue.icon <- makeIcon(
       iconUrl = paste0(
           system.file( "climex_app", package = "climexUI" ),
           "/www/marker-icon.png" ),
@@ -186,7 +193,7 @@ leafletClimex <- function( input, output, session, reactive.chosen,
                                       package = "climexUI" ),
                          "/www/marker-shadow.png" ), shadowWidth = 41,
       shadowHeight = 41, shadowAnchorX = 12.5, shadowAnchorY = 41 )
-  red.icon <-  makeIcon(
+  red.icon <- makeIcon(
       iconUrl = paste0(
           system.file( "climex_app", package = "climexUI" ),
           "/www/select-marker.png" ),
@@ -388,7 +395,7 @@ leafletClimex <- function( input, output, session, reactive.chosen,
           baseGroups = c( "OpenTopoMaps", "OpenStreetMaps" ),
           overlayGroups = c( "stations", "returns" ),
           options = layersControlOptions( collapsed = FALSE ) )
-      map.leaflet <- addLegend(
+      map.leaflet <- leaflet::addLegend(
           map.leaflet, pal = palette, layerId = "leafletLegend",
           values = c( color.min, color.max ),
           orientation = "horizontal", width = map.width )
@@ -511,64 +518,49 @@ leafletClimex <- function( input, output, session, reactive.chosen,
   return( selected.station )
 }
 
-##' @title Choosing a data set in the Climex app
+##' @title Choosing a data set in the \code{climex} app
 ##' @description This functions extracts all stations containing more
-##'   than a specified number of years of data
-##' @details It uses the current database and returns all stations
-##'   which are at least as long as the value of the input$sliderYears
-##'   slider.
+##'   than a specified number of years of data.
+##' @details It uses the current database and returns all stations,
+##'   which are at least as long as \code{sliderYears}.
 ##'
 ##' @param selectDataBase Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
+##'   data source. It is either of one of the names of the provided
+##'   list in the \code{list.data.sources} argument of the
+##'   \code{\link{climex}} function or \emph{Artificial data}. In case
+##'   of the latter choice, the function \code{\link{data.selection}}
+##'   will provide a \emph{reactive} object containing random numbers
+##'   drawn from the distribution specified using
+##'   \code{radioEvdStatistics}. Default = a random element of
+##'   the provided input.
 ##' @param sliderYears Numerical (slider) input to determine the
 ##'   minimal length (in years) of the time series to be
-##'   displayed. Minimal value is 0 and maximal is 155 (longest one in
-##'   the DWD database), the default value is 65 and the step width is
-##'   1.
-##' @param selectDataType Character (select) input to determine which
-##'   set of measurements should be used. This choice is important if
-##'   the input of the \code{\link{climex}} function was not just a
-##'   list of different station data, but a list of such lists. This
-##'   additional layer of lists can e.g. represent different types of
-##'   measurement data like precipitation and temperature. Their names
-##'   are derived from the names of the input list (see \code{link{
-##'   menuSelectDataType}}).
-##' @param reactive.loading Reactive value allowing the user to load a
-##'   time series of class \pkg{xts} or as a list of class \pkg{xts}
-##'   objects into the climex app. \code{\link{file.loading}}
+##'   displayed. Minimal value is 0 and maximal is 155, the default
+##'   value is 65 and the step width is 1.
 ##' @param climex.environment Environment containing the global
-##'   variables used within the climex app. Namely the last values
-##'   displayed in the table and the lists containing the station
-##'   data. 
+##'   variables used within the \code{climex} app. Namely the last
+##'   values displayed in the table and the lists containing the
+##'   station data. 
 ##'
 ##' @family leaflet
 ##'
 ##' @import shiny
 ##' @import climex
 ##' 
-##' @return Reactive list containing a list of all selected stations
-##'   and their positions.
-##' @author Philipp Mueller 
+##' @return  Reactive \code{list}  containing  a  \code{list} of  all
+##'   selected stations and their positions.
+##' @author Philipp Mueller
 data.chosen <- function( selectDataBase, sliderYears,
-                        selectDataSource, climex.environment ){
+                        climex.environment ){
   data <- reactive( {
-    print( "* in data.chosen" )
     if ( is.null( selectDataBase() ) ||
          is.null( sliderYears() ) ){
       return( NULL )
     }
     ## The generation of the artificial data is handled in the
-    ## data.selection reactive function. To ensure everything will
-    ## work nevertheless, some random data will be returned.
+    ## `data.selection` reactive function.
     if ( selectDataBase() == "Artificial data" ){
-      return( NULL )## list( climex.environment$list.data.sources[[ 1 ]],
-                   ## climex.environment$data.frame.position ) )
+      return( NULL )
     } else {
       selection.list <-
         climex.environment$list.data.sources[[
@@ -578,22 +570,22 @@ data.chosen <- function( selectDataBase, sliderYears,
       positions.all <- climex.environment$data.frame.positions
  
       if ( sliderYears() < 20 ){
-        ## Display a warning and return for a slider value lesser than 20.
+        ## Display a warning and return for a slider value lesser than
+        ## 20.
         shinytoastr::toastr_info( "We are done extreme value analysis. Please select longer time series!",
                                  preventDuplicates = TRUE )
         return( NULL )
       }
-      ## select time series with sufficient length
+      ## Select time series with sufficient length.
       selection <- Reduce( c, lapply( selection.list, function( x )
         length( unique( lubridate::year( x ) ) ) ) ) >= sliderYears()
       stations.selected <- selection.list[ selection ]
       stations.selected.names <- names( selection.list )[ selection ]
       positions.selected <- positions.all[
         which( positions.all$name %in% stations.selected.names ),  ]
-      ## first element contains a list of all selected stations
-      ## second element contains a data.frame with the longitude,
-      ## latitude, altitude and name of each selected station
-      print( "* data.chosen ready" )
+      ## The first element contains a list of all selected stations.
+      ## The second contains a data.frame with at least the longitude,
+      ## latitude, and name of each selected station.
       return( list( data = stations.selected,
                    positions = positions.selected ) )
     }

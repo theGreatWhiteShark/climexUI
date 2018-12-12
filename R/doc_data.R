@@ -12,7 +12,7 @@
 ##' named "Potsdam", which now contains the actual time series of
 ##' class \pkg{xts}.
 ##'
-##' @format Class \code{list(list(\pkg{xts}))}
+##' @format Class \code{list(list(xts))}
 ##' @source \url{http://www.dwd.de/}
 ##' @family fallbackData
 ##' @name list.data.sources.fallback

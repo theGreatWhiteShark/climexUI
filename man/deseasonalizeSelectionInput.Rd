@@ -2,20 +2,20 @@
 % Please edit documentation in R/climex_preprocessing.R
 \name{deseasonalizeSelectionInput}
 \alias{deseasonalizeSelectionInput}
-\title{Removing the seasonality in the Climex app}
+\title{Removing the seasonality in the \code{climex} app}
 \usage{
 deseasonalizeSelectionInput()
 }
 \value{
-menuItemOutput
+\code{\link[shinydashboard]{menuItemOutput}}
 }
 \description{
 Removing the seasonality.
 }
 \details{
-Not a real shiny module, since I have to use this select
-  input outside its namespace. Provides the
-  \code{\link[shinydashboard]{menuItemOutput}} for
+Not  a real \pkg{shiny} module, since I  have to use this
+  select    input   outside    its    namespace.   Provides    the
+  \code{\link[shinydashboard]{menuItemOutput}}                 for
   \code{\link{deseasonalizeSelection}}
 }
 \seealso{

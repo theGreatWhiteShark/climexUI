@@ -2,42 +2,43 @@
 % Please edit documentation in R/climex_sidebar.R
 \name{sidebarDataType}
 \alias{sidebarDataType}
-\title{Sidebar menu selection in the Climex app}
+\title{Sidebar menu selection in the \code{climex} app}
 \usage{
 sidebarDataType(selectDataBase, radioEvdStatistics)
 }
 \arguments{
 \item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+data source. It is either of one of the names of the provided
+list in the \code{list.data.sources} argument of the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive} object containing random numbers
+drawn from the distribution specified using
+\code{radioEvdStatistics}. Default = a random element of
+the provided input.}
 
 \item{radioEvdStatistics}{Character (radio) input determining
 whether the GEV or GP distribution shall be fitted to the
 data. Choices: c( "GEV", "GP" ), default = "GEV".}
 }
 \value{
-renderMenu
+\code{\link[shinydashboard]{renderMenu}}
 }
 \description{
 Sidebar menu selection.
 }
 \details{
-Provides the third selection menu in the sidebar.
-  If input$selectDataBase, provided by
-  \code{\link{sidebarDataBase}}, was set to "Artificial data", the
-  menu will be a numerical input slider to provide the scale
-  parameter for the GEV or shape parameter for the GP
-  distribution. Else it will be a drop down menu listing the
-  different types of data available at the chosen station.
+Provides the  third selection menu  in the  sidebar.  If
+  \code{selectDataBase},                provided                by
+  \code{\link{sidebarDataBase}},         was        set         to
+  \code{"Artificial  data"}, the  menu will  be a  numerical input
+  slider  to provide  the scale  parameter  for the  GEV or  shape
+  parameter for the  GP distribution. Else it will be  a drop down
+  menu listing the different types of data available at the chosen
+  station.
 }
 \seealso{
 Other sidebar: \code{\link{data.selection}},
-  \code{\link{file.loading}},
   \code{\link{sidebarCleaningInput}},
   \code{\link{sidebarCleaning}},
   \code{\link{sidebarDataBaseInput}},

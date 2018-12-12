@@ -2,20 +2,20 @@
 % Please edit documentation in R/climex_preprocessing.R
 \name{generalButtonMinMaxInput}
 \alias{generalButtonMinMaxInput}
-\title{Minimum or maximum extremes in the Climex app}
+\title{Minimum or maximum extremes in the \code{climex} app}
 \usage{
 generalButtonMinMaxInput()
 }
 \value{
-menuItemOutput
+\code{\link[shinydashboard]{menuItemOutput}}
 }
 \description{
 Whether to determine the minimal or maximal extremes.
 }
 \details{
-Not a real shiny module, since I have to use this select
-  input outside its namespace. Provides the
-  \code{\link[shinydashboard]{menuItemOutput}} for
+Not  a real \pkg{shiny} module, since I  have to use this
+  select    input   outside    its    namespace.   Provides    the
+  \code{\link[shinydashboard]{menuItemOutput}}                 for
   \code{\link{generalButtonMinMaxInput}}
 }
 \seealso{

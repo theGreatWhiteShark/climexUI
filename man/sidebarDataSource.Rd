@@ -2,53 +2,53 @@
 % Please edit documentation in R/climex_sidebar.R
 \name{sidebarDataSource}
 \alias{sidebarDataSource}
-\title{Sidebar menu selection in the Climex app}
+\title{Sidebar menu selection in the \code{climex} app}
 \usage{
 sidebarDataSource(selectDataBase, radioEvdStatistics, reactive.chosen,
   selected.station)
 }
 \arguments{
-\item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+\item{selectDataBase}{Character  (select) input to  determine the
+data source.  It  is either of one of the  names of the provided
+list   in   the   \code{list.data.sources}   argument   of   the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter  choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive}  object containing random numbers
+drawn     from     the      distribution     specified     using
+\code{radioEvdStatistics}. Default =  a random element of
+the provided input.}
 
-\item{radioEvdStatistics}{Character (radio) input determining
-whether the GEV or GP distribution shall be fitted to the
+\item{radioEvdStatistics}{Character  (radio) input  determining
+whether  the GEV  or  GP  distribution shall  be  fitted to  the
 data. Choices: c( "GEV", "GP" ), default = "GEV".}
 
-\item{reactive.chosen}{Reactive value containing a list of the
-list of all provided stations and a data.frame containing the
-meta data.}
+\item{reactive.chosen}{Reactive  value containing  a list  of the
+\code{list}  of all  provided stations  and a  \code{data.frame}
+containing the meta data.}
 
-\item{selected.station}{Reactive value provided by the
-\code{\link{leafletClimex}} function. It contains the name of
-the station selected by the user by clicking on the leaflet
-map. It's provided as a character and NULL if no click occurred
-so far.}
+\item{selected.station}{Reactive   value   provided  by   the
+\code{\link{leafletClimex}}  function. It  contains the  name of
+the  station   selected  by   the  user   by  clicking   on  the
+\pkg{leaflet} map. It's provided  as a character and \code{NULL}
+if no click occurred so far.}
 }
 \value{
-renderMenu
+\code{\link[shinydashboard]{renderMenu}}
 }
 \description{
 Sidebar menu selection.
 }
 \details{
 Provides the second selection menu in the sidebar.
-  If input$selectDataBase, provided by
-  \code{\link{sidebarDataBase}}, was set to "Artificial data", the
+  If \code{selectDataBase}, provided by
+  \code{\link{sidebarDataBase}}, was set to \code{"Artificial data"}, the
   menu will be a numerical input slider to provide the location
   parameter for the GEV or scale parameter for the GP
   distribution. Else it will be a drop down menu listing the names
-  of all available stations (see \code{\link{data.chosen}})
+  of all available stations (see \code{\link{data.chosen}}).
 }
 \seealso{
 Other sidebar: \code{\link{data.selection}},
-  \code{\link{file.loading}},
   \code{\link{sidebarCleaningInput}},
   \code{\link{sidebarCleaning}},
   \code{\link{sidebarDataBaseInput}},

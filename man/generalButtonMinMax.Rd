@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_preprocessing.R
 \name{generalButtonMinMax}
 \alias{generalButtonMinMax}
-\title{Minimum or maximum extremes in the Climex app}
+\title{Minimum or maximum extremes in the \code{climex} app}
 \usage{
 generalButtonMinMax(radioEvdStatistics, selectDataType)
 }
@@ -17,19 +17,19 @@ the input of the \code{\link{climex}} function was not just a
 list of different station data, but a list of such lists. This
 additional layer of lists can e.g. represent different types of
 measurement data like precipitation and temperature. Their names
-are derived from the names of the input list (see \code{link{
-menuSelectDataType}}).}
+are derived from the names of the input list.}
 }
 \value{
-menuItemOutput
+\code{\link[shinydashboard]{menuItemOutput}}
 }
 \description{
 Whether to determine the minimal or maximal extremes.
 }
 \details{
-Not a real shiny module, since I have to use this select
-  input outside its namespace. Only when input$radioEvdStatistics
-  is set of "GEV" the minimal extremes scan be used.
+Not a real \pkg{shiny}  module since I have  to use this
+  select    input    outside     its    namespace.    Only    when
+  \code{radioEvdStatistics}  is set  to  \code{"GEV"} the  minimal
+  extremes scan be used.
 }
 \seealso{
 Other preprocessing: \code{\link{cleaning.interactive}},

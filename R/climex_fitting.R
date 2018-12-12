@@ -1,13 +1,13 @@
 ### All functions and modules in charge of fitting a GEV or GP
-### function to the provided time series in the Climex app.
+### distribution to the provided time series in the Climex app.
 
-##' @title Interactive fits in Climex app
-##' @description Function to perform the GEV/GP fit within the Climex
-##'   app. 
+##' @title Interactive fits in \code{climex} app
+##' @description  Function  to perform  the  GEV/GP  fit within  the
+##'   \code{climex} app.
 ##' @details This function does not wait for the initialization of its
-##'   slider, checkbox etc. inputs. This way the fit can be performed
-##'   with its default settings in the leaflet tab without switching
-##'   to the General tab first.
+##'   slider, checkbox etc. inputs. This  way the fit can be performed
+##'   with  its  default  settings   in  the  \emph{Map}  tab  without
+##'   switching to the \emph{General} tab first.
 ##'
 ##' @param x.kept Time series of class \pkg{xts}. Removing clicked or
 ##'   brushed values has to be done beforehand.
@@ -16,28 +16,30 @@
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
 ##' @param buttonMinMax Character (radio) input determining whether
 ##'   the GEV/GP distribution shall be fitted to the smallest or
-##'   biggest vales. Choices: c( "Max", "Min ), default = "Max".
+##'   biggest values. Choices: c( "Max", "Min ), default = "Max".
 ##' @param sliderThreshold Numerical (slider) input determining the
 ##'   threshold used within the GP fit and the extraction of the
 ##'   extreme events. Boundaries: minimal and maximal value of the
 ##'   deseasonalized time series (rounded). Default: 0.8* the upper
-##'   end point. 
+##'   end point.
 ##' @param selectDataBase Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
+##'   data source. It is either of one of the names of the provided
+##'   list in the \code{list.data.sources} argument of the
+##'   \code{\link{climex}} function or \emph{Artificial data}. In case
+##'   of the latter choice, the function \code{\link{data.selection}}
+##'   will provide a \emph{reactive} object containing random numbers
+##'   drawn from the distribution specified using
+##'   \code{radioEvdStatistics}. Default = a random element of
+##'   the provided input.
 ##'
 ##' @family climex-fitting
 ##'
 ##' @import climex
 ##'
-##' @return Object of class 'climex.fit.gev' or 'climex.fit.gpd',
-##'   depending on the choice in input$radioEvdStatistics.
-##' @author Philipp Mueller 
+##' @return Object of class \code{climex.fit.gev} or
+##'   \code{climex.fit.gpd}, depending on the choice in
+##'   \code{radioEvdStatistics}
+##' @author Philipp Mueller
 fit.interactive <- function( x.kept, radioEvdStatistics, buttonMinMax,
                             sliderThreshold, selectDataBase ){
   ## Don't wait for the initialization here or the summary statistic
@@ -145,30 +147,31 @@ fit.interactive <- function( x.kept, radioEvdStatistics, buttonMinMax,
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
 ##' @param buttonMinMax Character (radio) input determining whether
 ##' the GEV/GP distribution shall be fitted to the smallest or biggest
-##' vales. Choices: c( "Max", "Min ), default = "Max".
+##' values. Choices: c( "Max", "Min ), default = "Max".
 ##' @param sliderThreshold Numerical (slider) input determining the
 ##' threshold used within the GP fit and the extraction of the extreme
 ##' events. Boundaries: minimal and maximal value of the
 ##'   deseasonalized time series (rounded). Default: 0.8* the upper
-##'   end point. 
+##'   end point.
 ##' @param selectDataBase Character (select) input to determine the
-##'   data source. In the default installation there are two
-##'   options: c( "Input", "Artificial data" ). The first one
-##'   uses the database loaded at the initialization of the climex app
-##'   (see the \code{\link{climex}}). The second one allows the user 
-##'   to produce random numbers distributed according to the GEV or GP
-##'   distribution. Determined by menuSelectDataBase. Default =
-##'   "Input".
+##'   data source. It is either of one of the names of the provided
+##'   list in the \code{list.data.sources} argument of the
+##'   \code{\link{climex}} function or \emph{Artificial data}. In case
+##'   of the latter choice, the function \code{\link{data.selection}}
+##'   will provide a \emph{reactive} object containing random numbers
+##'   drawn from the distribution specified using
+##'   \code{radioEvdStatistics}. Default = a random element of
+##'   the provided input.
 ##' 
 ##' @import shiny
 ##' @import climex
 ##'
 ##' @family climex-fitting
 ##'
-##' @return Reactive value holding a fitted object of class
-##'   'climex.fit.gev' or 'climex.fit.gpd', depending on the choice of
-##'   input$radioEvdStatistics
-##' @author Philipp Mueller 
+##' @return  Reactive  value  holding   a  fitted  object  of  class
+##'   \code{climex.fit.gev} or \code{climex.fit.gpd}, depending on the
+##'   choice in \code{radioEvdStatistics}.
+##' @author Philipp Mueller
 data.fitting <- function( reactive.extreme,
                          reactive.rows, fit.interactive,
                          radioEvdStatistics, buttonMinMax,
@@ -193,11 +196,11 @@ data.fitting <- function( reactive.extreme,
     ## ggplot2 plot of the extreme events in the bottom right box in
     ## the 'General' tab
     if ( length( reactive.rows$keep.rows ) != length( x.extreme ) ){
-      ## Sometime, when switching between time series, the updating of
+      ## Sometimes, when switching between time series, the update of
       ## reactive.rows needs longer/is evaluated at a later step.
-      ## Therefore its length does not correspond to the selected time
+      ## Therefore, its length does not correspond to the selected time
       ## series anymore. In such a case, just return NULL and wait for
-      ## the next round (updating reactive.rows)
+      ## the next round (updating reactive.rows).
       return( NULL )
     }
     x.kept <- x.extreme[ reactive.rows$keep.rows ]
@@ -207,11 +210,11 @@ data.fitting <- function( reactive.extreme,
   } )
 }
 
-##' @title Result table in Climex app
+##' @title Table holding the results in the \code{climex} app
 ##' @description Table to display the results of the GEV/GP fitting
 ##'   procedure. 
 ##' @details Provides the UI part of \code{\link{generalFitStatistics}}
-##' but is not a proper Shiny module.
+##' but is not a proper \pkg{shiny} module.
 ##'
 ##' @importFrom shinydashboard box
 ##' @import shiny
@@ -226,22 +229,26 @@ generalFitStatisticsTable <- function(){
       uiOutput( "generalFitStatistics", colHeaders = "provided" ) )
 }
 
-##' @title Result table in Climex app
-##' @description Table to display the results of the GEV/GP fitting
-##'   procedure. 
-##' @details Displaying of the AIC, nllh, BIC and fitted parameters as
-##'   well as the difference to the three last fits! (and highlight
-##'   positive values with with green and negative with red). This
-##'   function will define some global variables to hold the results
-##'   of the former fits. This is necessary in order to mark the
-##'   progress in green or red. 
+##' @title Table holding the results in the \code{climex} app
+##' @description  Table to display  the results of the  GEV/GP fitting
+##'   procedure.
+##' @details Displaying  of the  Akaike information  criterion (AIC),
+##'   negative log-likelihood  (nllh), Bayesien  information criterion
+##'   (BIC),  and  the  fitted  GEV/GP   parameters  as  well  as  the
+##'   difference   between   their   most  recent   and   last   three
+##'   values. Positive values are highlighted in green and negative in
+##'   red color.  This function will  define some global  variables to
+##'   hold the results of the former  fits. This is necessary in order
+##'   to mark the progress in green or red.
 ##'
 ##' @param reactive.fitting Reactive value containing the results of
-##'   the fit (\code{\link{fit.gev}} or \code{\link{fit.gpd}}
-##'   depending on radioEvdStatistic) to the blocked time series in
-##'   reactive.extreme()[[ 1 ]].
+##'   the fit (\code{\link[climex]{fit.gev}} or
+##'   \code{\link[climex]{fit.gpd}} depending on
+##'   \code{radioEvdStatistic}) to the blocked time series in 
+##'   in the first element of the list returned by
+##'   \code{\link{data.extremes}}.
 ##' @param reactive.extreme Reactive value containing a list of the
-##'   extracted extreme events of a time series, the deseasonalized
+##'   extracted extreme events of a time series, the deseasonalized,
 ##'   and the pure version of this very time series. All three
 ##'   elements are provided as class \pkg{xts}.
 ##' @param sliderThreshold Numerical (slider) input determining the
@@ -251,15 +258,15 @@ generalFitStatisticsTable <- function(){
 ##'   end point. 
 ##' @param buttonMinMax Character (radio) input determining whether
 ##'   the GEV/GP distribution shall be fitted to the smallest or
-##'   biggest vales. Choices: c( "Max", "Min ), default = "Max".
+##'   biggest values. Choices: c( "Max", "Min ), default = "Max".
 ##' @param radioEvdStatistics Character (radio) input determining
 ##'   whether the GEV or GP distribution shall be fitted to the
 ##'   data. Choices: c( "GEV", "GP" ), default = "GEV".
 ##' @param color.table Function adding color to the table constructed
-##'   within generalFitStatistics. It will replace some placeholders
-##'   by color tags. \code{\link{color.table}}
+##'   within \code{\link{generalFitStatistics}}. It will replace some
+##'   placeholders by color tags. See \code{\link{color.table}}.
 ##' @param climex.environment Environment containing the global
-##'   variables used within the climex app. Namely the last values
+##'   variables used within the \code{climex} app. Namely the last values
 ##'   displayed in the table and the lists containing the station
 ##'   data. 
 ##'
@@ -324,8 +331,8 @@ generalFitStatistics <- function( reactive.fitting, reactive.extreme,
                                total.length = length( x.data[[ 2 ]] )
                            )$return.level )
     }
-    ## Negating the return level to get the correct results for
-    ## the minimum
+    ## Negate the return level to get the correct results for
+    ## the minimum.
     if ( !is.null( buttonMinMax() ) && buttonMinMax() == "Min" &&
          radioEvdStatistics() == "GEV" ){
       current[ 7 ] <- ( -1 )* current[ 7 ]
@@ -335,7 +342,7 @@ generalFitStatistics <- function( reactive.fitting, reactive.extreme,
     climex.environment$last.2 <- climex.environment$last.1
     last.1.aux <- current - climex.environment$last.values
     ## For the fitted parameters any deviation of more than 1
-    ## percent is marked red
+    ## percent is marked in red.
     for ( ll in 1 : length( x.fit.evd$par ) ){
       if ( all ( last.1.aux == 0 ) ){
         ## This happens right in the beginning on initialization
@@ -361,7 +368,7 @@ generalFitStatistics <- function( reactive.fitting, reactive.extreme,
       }
     }
     ## For the test statistic all changes to lower values are
-    ## marked green
+    ## colored green.
     for ( ll in ( length( x.fit.evd$par ) + 1 ) :
              length( last.1.aux ) ){
       if( last.1.aux[ ll ] > 0 ){
@@ -380,7 +387,7 @@ generalFitStatistics <- function( reactive.fitting, reactive.extreme,
     }
     climex.environment$last.1 <- last.1.int
     if ( all( climex.environment$last.values == 0 ) ){
-      ## I don't want to see the statistics during the initialization
+      ## I don't want to see the statistics during the initialization.
       climex.environment$last.1 <-
         rep( 0, length( climex.environment$last.1 ) ) }
     climex.environment$last.values <- current
@@ -404,8 +411,8 @@ generalFitStatistics <- function( reactive.fitting, reactive.extreme,
                              '<math id="math-text" xmlns="http://www.w3.org/1998/Math/MathML"><msub><mtext>hist</mtext><mn>2</mn></msub></math>',
                              '<math id="math-text" xmlns="http://www.w3.org/1998/Math/MathML"><msub><mtext>hist</mtext><mn>3</mn></msub></math>' )
                              
-    ## Generate a html table with the 'pander' and the 'markdown'
-    ## package
+    ## Generate a HTML table with the 'pander' and the 'markdown'
+    ## package.
     x.html.table <-
       markdown::markdownToHTML(
                     text = pander::pandoc.table.return(
@@ -417,12 +424,12 @@ generalFitStatistics <- function( reactive.fitting, reactive.extreme,
   })
 }
 
-##' @title Colorful tables in Climex app
+##' @title Colorful tables in the \code{climex} app
 ##' @description Adds font color to a HTML table.
 ##'
-##' @details In each element of the table where the font should be
-##' colored, the corresponding color has to be added via a
-##' paste( as.character( table[ x, y ] ), "#0000FF" ).
+##' @details In each element of the table, where the font should be
+##' colored, the corresponding color has to be added via
+##' \code{paste( as.character( table[ x, y ] ), "#0000FF" )}.
 ##'
 ##' @param x.html.table HTML table.
 ##' @param css.colours Character vector containing the colors in hex.

@@ -2,12 +2,12 @@
 % Please edit documentation in R/climex_sidebar.R
 \name{sidebarSeriesLengthInput}
 \alias{sidebarSeriesLengthInput}
-\title{Series length in the Climex app}
+\title{Series length in the \code{climex} app}
 \usage{
 sidebarSeriesLengthInput()
 }
 \value{
-menuItemOutput
+\code{\link[shinydashboard]{menuItemOutput}}
 }
 \description{
 Slider to determine the length of an artificial time
@@ -20,7 +20,6 @@ Provides the \code{\link[shinydashboard]{menuItemOutput}}
 }
 \seealso{
 Other sidebar: \code{\link{data.selection}},
-  \code{\link{file.loading}},
   \code{\link{sidebarCleaningInput}},
   \code{\link{sidebarCleaning}},
   \code{\link{sidebarDataBaseInput}},

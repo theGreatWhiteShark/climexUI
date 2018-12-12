@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_sidebar.R
 \name{sidebarCleaning}
 \alias{sidebarCleaning}
-\title{Data cleaning in the Climex app}
+\title{Data cleaning in the \code{climex} app}
 \usage{
 sidebarCleaning(radioEvdStatistics, selectDataBase)
 }
@@ -12,31 +12,30 @@ whether the GEV or GP distribution shall be fitted to the
 data. Choices: c( "GEV", "GP" ), default = "GEV".}
 
 \item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are three
-options: c( "Input", "Artificial data" ). The first one
-uses the data provided as an argument to the call of the
-\code{\link{climex}} function. The second one uses the database
-of the German weather service (see
-\code{\link{download.data.dwd}}). The third one allows the user
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase.}
+data source. It is either of one of the names of the provided
+list in the \code{list.data.sources} argument of the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive} object containing random numbers
+drawn from the distribution specified using
+\code{radioEvdStatistics}. Default = a random element of
+the provided input.}
 }
 \value{
-renderMenu
+\code{\link[shinydashboard]{renderMenu}}
 }
 \description{
-Toggling the cleaning of the time series
+Toggling the cleaning of the time series.
 }
 \details{
 A checkbox input. If toggled and the GEV distribution was
-  chosen via input$radioEvdStatistics, all incomplete years will
+  chosen via \code{radioEvdStatistics}, all incomplete years will
   be removed from the time series. If on the other hand the GP
   distribution was picked, all cluster will be removed and only
   their highest point will remain.
 }
 \seealso{
 Other sidebar: \code{\link{data.selection}},
-  \code{\link{file.loading}},
   \code{\link{sidebarCleaningInput}},
   \code{\link{sidebarDataBaseInput}},
   \code{\link{sidebarDataBase}},

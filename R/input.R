@@ -1,27 +1,49 @@
 ### input.R - Bunch of functions used to handle the input to the
 ### climex() function
-##' @title Check whether the input fulfills our requirements.
-##' @description The time series have to be provided as a named list
-##'   of class \pkg{xts} objects and the position data has to be a
-##'   data.frame containing at least the named columns \emph{name},
-##'   \emph{longitude}, and \emph{latitude}.
-##' @details All named elements of `list.data.sources`, which do not
-##'   appear in `data.frame.positions$name` will be discarded and vice
-##'   versa.
-##'
-##' @param list.data.sources A named list of \pkg{xts}-class time
-##'   series.
+##' @title Check whether the input fulfills our requirements
 ##' 
-##' @param data.frame.positions A data.frame containing at least the
-##'   named columns \emph{name}, \emph{longitude}, and
-##'   \emph{latitude}.
+##' @description The  time  series  has to  be  provided  as a  named
+##'   \code{list}  of   named  \code{list}s  of  class   \pkg{xts}  or
+##'   \code{data.frame}  objects.   The  position  data has  to  be  a
+##'   \code{data.frame}   containing  at   least  the   named  columns
+##'   \emph{name},   \emph{longitude},   and  \emph{latitude}   or   a
+##'   \code{\link[sp]{SpatialPointsDataFrame}}       containing      a
+##'   \emph{name} column in their data slot.
 ##'
+##' @details  All named elements of  code{list.data.sources}, which do
+##'   not     appear     in      the     \code{name}     column     of
+##'   \code{data.frame.positions} will be discarded and vice versa.
+##'
+##'   Internally the \code{data.frame}-type of
+##'   \code{list.data.sources} will be converted into the \pkg{xts}
+##'   type and the \code{\link[sp]{SpatialPointsDataFrame}} type of
+##'   \code{data.frame.positions} will be converted into its
+##'   \code{data.frame} equivalent.
+##'
+##' @param list.data.sources A named \code{list} of named \code{list}s
+##'   of \pkg{xts}-class time series or \code{data.frame}s. The first
+##'   level of hierarchy in the list corresponds to the different
+##'   climatological variables, which will be accessible via the first
+##'   drop down menu in the sidebar. The second level corresponds to
+##'   the names of the individual stations measurements of the top
+##'   level variable are available for. The series themselves can be
+##'   provided either as a \pkg{xts} object to \code{data.frame}
+##'   containing a numerical \code{value} and a time-date \code{date}
+##'   column.
+##' 
+##' @param data.frame.positions Either a \code{data.frame} containing
+##'   at least the named columns \emph{name}, \emph{longitude}, and
+##'   \emph{latitude} or a \code{\link[sp]{SpatialPointsDataFrame}}
+##'   containing a \code{name} column in its \code{@data} slot.
+##' @param silent Whether to display warnings if the check
+##'   failed. Default = FALSE.
+##' 
 ##' @importFrom zoo is.zoo
 ##' 
 ##' @return A list containing the result of the check (TRUE if the
 ##'   input has the right format) and a version of the input stripped
-##'   of any list elements and data.frame columns, which just appear
-##'   in one of the input arguments.
+##'   of any \code{list} elements and \code{data.frame} columns, which
+##'   just appear in one of the input arguments.
 ##'   \itemize{
 ##'     \item{ check.result: Boolean }
 ##'     \item{ list.data.sources: Same format as input }
@@ -126,7 +148,17 @@ check.input <- function( list.data.sources, data.frame.positions,
                data.frame.positions = data.frame.positions ) )
 }
 
-  
+##' @title Convert time series
+##' @description Converts a time series provided as \code{data.frame}
+##'   into an object of class \pkg{xts}.
+##'
+##' @param  input.df  \code{data.frame},  which has  to  contain  two
+##'   columns called  \code{value} and \code{date}. The  former has to
+##'   be of class \code{numeric} and the latter of class \code{Date}.
+##'
+##' @importFrom xts xts
+##' @return Either \code{NULL} if the conversion failed or an object
+##'   of class \pkg{xts}.
 convert.data.frame.to.xts <- function( input.df ){
   ## Check the structure of the input
   if ( !is.data.frame( input.df ) ||

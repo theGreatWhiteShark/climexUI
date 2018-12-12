@@ -2,7 +2,7 @@
 % Please edit documentation in R/shiny_base.R
 \name{climex.ui}
 \alias{climex.ui}
-\title{The Climex app UI}
+\title{The \code{climex} app UI}
 \usage{
 climex.ui(selected = c("Map", "General"))
 }
@@ -14,8 +14,8 @@ starting the app}
 HTML code of the interface
 }
 \description{
-The user interface for the \code{\link{climex}}
-  function.
+The user interface for the \pkg{climexUI} \pkg{shiny}
+  application.
 }
 \details{
 Contains all the HTML codes.

@@ -25,7 +25,7 @@ data. Choices: c( "GEV", "GP" ), default = "GEV".}
 
 \item{buttonMinMax}{Character (radio) input determining whether
 the GEV/GP distribution shall be fitted to the smallest or biggest
-vales. Choices: c( "Max", "Min ), default = "Max".}
+values. Choices: c( "Max", "Min ), default = "Max".}
 
 \item{sliderThreshold}{Numerical (slider) input determining the
 threshold used within the GP fit and the extraction of the extreme
@@ -34,18 +34,19 @@ events. Boundaries: minimal and maximal value of the
   end point.}
 
 \item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+data source. It is either of one of the names of the provided
+list in the \code{list.data.sources} argument of the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive} object containing random numbers
+drawn from the distribution specified using
+\code{radioEvdStatistics}. Default = a random element of
+the provided input.}
 }
 \value{
-Reactive value holding a fitted object of class
-  'climex.fit.gev' or 'climex.fit.gpd', depending on the choice of
-  input$radioEvdStatistics
+Reactive  value  holding   a  fitted  object  of  class
+  \code{climex.fit.gev} or \code{climex.fit.gpd}, depending on the
+  choice in \code{radioEvdStatistics}.
 }
 \description{
 A reactive value performing the GEV/GP fit.

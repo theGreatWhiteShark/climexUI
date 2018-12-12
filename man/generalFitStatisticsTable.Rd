@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_fitting.R
 \name{generalFitStatisticsTable}
 \alias{generalFitStatisticsTable}
-\title{Result table in Climex app}
+\title{Table holding the results in the \code{climex} app}
 \usage{
 generalFitStatisticsTable()
 }
@@ -15,7 +15,7 @@ Table to display the results of the GEV/GP fitting
 }
 \details{
 Provides the UI part of \code{\link{generalFitStatistics}}
-but is not a proper Shiny module.
+but is not a proper \pkg{shiny} module.
 }
 \seealso{
 Other climex-fitting: \code{\link{color.table}},

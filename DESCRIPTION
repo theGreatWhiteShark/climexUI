@@ -1,6 +1,6 @@
 Package: climexUI
 Type: Package
-Title: Shiny-based user interface to analyse large amounts of station data using the climex package.
+Title: Shiny-based User Interface to Analyse Large Amounts of Station Data Using The Climex Package
 Version: 0.1.0
 Date: 2018-12-12
 LazyData: true

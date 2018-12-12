@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_preprocessing.R
 \name{data.extremes}
 \alias{data.extremes}
-\title{Extracting extremes in the Climex app}
+\title{Extracting extremes in the \code{climex} app}
 \usage{
 data.extremes(reactive.selection, radioEvdStatistics, sliderBlockLength,
   sliderThreshold, checkboxDecluster, deseasonalize.interactive,
@@ -10,55 +10,57 @@ data.extremes(reactive.selection, radioEvdStatistics, sliderBlockLength,
   cleaning.interactive, checkboxIncompleteYears)
 }
 \arguments{
-\item{reactive.selection}{Reactive value providing a time series
-of class \pkg{xts}. \code{\link{data.selection}}}
+\item{reactive.selection}{Reactive value providing  a time series
+of class \pkg{xts}. See \code{\link{data.selection}}.}
 
-\item{radioEvdStatistics}{Character (radio) input determining
-whether the GEV or GP distribution shall be fitted to the
+\item{radioEvdStatistics}{Character  (radio) input  determining
+whether  the GEV  or  GP  distribution shall  be  fitted to  the
 data. Choices: c( "GEV", "GP" ), default = "GEV".}
 
-\item{sliderBlockLength}{Numerical (slider) input determining the
-block length used in the GEV flavor of extreme value theory. On
+\item{sliderBlockLength}{Numerical  (slider) input determining the
+block length used in the GEV  flavor of extreme value theory. On
 default it is set to one year.}
 
-\item{sliderThreshold}{Numerical (slider) input determining the
-threshold used within the GP fit and the extraction of the
-extreme events. Boundaries: minimal and maximal value of the
-deseasonalized time series (rounded). Default: 0.8* the upper
+\item{sliderThreshold}{Numerical  (slider) input  determining the
+threshold  used within  the GP  fit  and the  extraction of  the
+extreme  events. Boundaries:  minimal and  maximal value  of the
+deseasonalized time  series (rounded).  Default: 0.8*  the upper
 end point.}
 
-\item{checkboxDecluster}{Logical (checkbox) input determining
-whether to remove all clusters in a time series and replace them
-by their maximal value. This box will be only available if
-input$radioEvdStatistics == "GP" and else will be NULL.}
+\item{checkboxDecluster}{Logical  (checkbox) input  determining
+whether to remove  all clusters in a time series  and to replace
+them by their maximal value. This  box will be only available if
+\code{radioEvdStatistics}  equals \code{"GP"}  and else  will be
+\code{NULL}.}
 
-\item{deseasonalize.interactive}{Function used to remove
-seasonality from a given time
+\item{deseasonalize.interactive}{Function   used  to   remove
+seasonality          from          a         given          time
 series. \code{\link{deseasonalize.interactive}}}
 
-\item{selectDeseasonalize}{Character (select) input determining
-which deseasonalization method should be used to remove the
-short-range correlations from the provided time series.
+\item{selectDeseasonalize}{Character (select)  input determining
+which  deseasonalization method  should  be used  to remove  the
+short-range   correlations  from   the  provided   time  series.
 \code{\link{deseasonalizeSelectionInput}}}
 
-\item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+\item{selectDataBase}{Character  (select) input to  determine the
+data source.  It  is either of one of the  names of the provided
+list   in   the   \code{list.data.sources}   argument   of   the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter  choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive}  object containing random numbers
+drawn     from     the      distribution     specified     using
+\code{radioEvdStatistics}. Default =  a random element of
+the provided input.}
 
-\item{buttonMinMax}{Character (radio) input determining whether
-the GEV/GP distribution shall be fitted to the smallest or
-biggest vales. Choices: c( "Max", "Min ), default = "Max".}
+\item{buttonMinMax}{Character  (radio) input  determining whether
+the  GEV/GP distribution  shall  be fitted  to  the smallest  or
+biggest values. Choices: c( "Max", "Min ), default = "Max".}
 
 \item{extremes.interactive}{Function used to split a time series
 into blocks of equal lengths and to just extract the maximal
 values from then or to extract all data points above a certain
 threshold value. Which option is chosen depends of the
-radioEvdStatistic. \code{\link{extremes.interactive}}}
+\code{radioEvdStatistic}. See \code{\link{extremes.interactive}}}
 
 \item{cleaning.interactive}{Function used to remove incomplete
 years from blocked time series or to remove clusters from data
@@ -67,23 +69,25 @@ above a certain threshold.}
 \item{checkboxIncompleteYears}{Logical (checkbox) input
 determining whether to remove all incomplete years of a time
 series. This box will be only available if
-input$radioEvdStatistics == "GEV" and else will be NULL.}
+\code{radioEvdStatistics} equals \code{"GEV"} and else will be
+\code{NULL}.}
 }
 \value{
-Reactive value containing a names list of the extracted
- extreme events, the deseasonalized and pure time series. All
-  three are of class \pkg{xts}.
+Reactive  value  containing a  named  \code{list} of  the
+  extracted  extreme  events,  the deseasonalized  and  pure  time
+  series. All three are of class \pkg{xts}.
 }
 \description{
 Reactive value extracting the extreme event of a time
   series and all input.
 }
 \details{
-First this reactive value will use reactive.selection to
-  obtain the time series it shall be working on. Afterwards it
-  applies both \code{\link{deseasonalize.interactive}} and
-  \code{\link{extremes.interactive}} to this time series. Finally
-  it return the resulting extreme events as well as the
+First     this    reactive    value     will    use
+  \code{reactive.selection} to obtain the  time series it shall be
+  working      on.       Afterwards,     it      applies      both
+  \code{\link{deseasonalize.interactive}}                      and
+  \code{\link{extremes.interactive}} to this time series. Finally,
+  it  returns  the   resulting  extreme  events  as   well  as  the
   deseasonalized and pure time series.
 }
 \seealso{

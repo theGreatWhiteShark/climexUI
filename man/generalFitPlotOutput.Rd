@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_plotting.R
 \name{generalFitPlotOutput}
 \alias{generalFitPlotOutput}
-\title{Plot of the fits in the Climex app}
+\title{Plot of the fits in the \code{climex} app}
 \usage{
 generalFitPlotOutput(id)
 }
@@ -10,11 +10,11 @@ generalFitPlotOutput(id)
 \item{id}{Namespace prefix}
 }
 \value{
-tabBox
+\code{\link[shinydashboard]{box}}
 }
 \description{
-Box containing the plot of the performed GEV/GP
-  fitting as well as three goodness-of-fit plots.
+\code{\link[shinydashboard]{box}} containing the plot of the
+  performed GEV/GP fit as well as three goodness-of-fit plots.
 }
 \details{
 This function provides the ouput to

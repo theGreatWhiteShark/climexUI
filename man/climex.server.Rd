@@ -2,7 +2,7 @@
 % Please edit documentation in R/shiny_base.R
 \name{climex.server}
 \alias{climex.server}
-\title{The Climex app server}
+\title{The \code{climex} app server}
 \usage{
 climex.server(input, output, session)
 }
@@ -18,17 +18,16 @@ climex.server(input, output, session)
 Function acting as the shiny server.
 }
 \description{
-Server-side part of the \code{\link{climex}} function.
+Server-side part of the \pkg{climexUI} \pkg{shiny}
+  application.
 }
 \details{
-Since it grew organically most of the features are
-  defined inside this function. Okay, why did I decided to define
-  the climex.server and the climex.ui function? Since in this way
-  I can provide a local and a server side variant of the code
-  which is maintained in the same place. I do not really like the
-  idea of installing the newest version of the code from Github
-  and than copy/pasting the code in some files somewhere in
-  /srv/shiny-server.
+All data handled by the server will be stored in the
+  \emph{input.RData} file along with all other JavaScript, CSS
+  etc. files in a folder, which path is defined in the option
+  \code{climex.path}. The \code{\link{climex}} should be used as
+  an auxiliary function to generate this folder and to stuff it
+  with all required files.
 }
 \seealso{
 Other top-level: \code{\link{climex.ui}},

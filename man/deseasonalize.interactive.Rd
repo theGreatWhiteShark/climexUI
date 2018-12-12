@@ -2,34 +2,36 @@
 % Please edit documentation in R/climex_preprocessing.R
 \name{deseasonalize.interactive}
 \alias{deseasonalize.interactive}
-\title{Removing seasonality in the Climex app}
+\title{Removing seasonality in the \code{climex} app}
 \usage{
 deseasonalize.interactive(x.xts, selectDeseasonalize, selectDataBase)
 }
 \arguments{
-\item{x.xts}{Time series of class 'xts' which has to be cleaned.}
+\item{x.xts}{Time  series of  class \pkg{xts},  which has  to be
+cleaned.}
 
-\item{selectDeseasonalize}{Character (select) input determining
-  which deseasonalization method should be used to remove the
-  short-range correlations from the provided time series.
-\code{\link{deseasonalizeSelectionInput}}. If NULL
-  \code{\link{anomalies}} will be used.}
+\item{selectDeseasonalize}{\code{Character}   (select)  input
+determining, which  deseasonalization method  should be  used to
+remove  the  short-range  correlations from  the  provided  time
+series.       \code{\link{deseasonalizeSelectionInput}}.      If
+\code{NULL} \code{\link{anomalies}} will be used.}
 
-\item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+\item{selectDataBase}{Character  (select) input to  determine the
+data source.  It  is either of one of the  names of the provided
+list   in   the   \code{list.data.sources}   argument   of   the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter  choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive}  object containing random numbers
+drawn     from     the      distribution     specified     using
+\code{radioEvdStatistics}. Default =  a random element of
+the provided input.}
 }
 \value{
-Time series of class 'xts'.
+Time series of class \pkg{xts}.
 }
 \description{
 Function for removing the seasonality of a given time
-  series within the Climex app.
+  series within the \code{climex} app.
 }
 \seealso{
 Other preprocessing: \code{\link{cleaning.interactive}},

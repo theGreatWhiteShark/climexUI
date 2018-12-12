@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_plotting.R
 \name{generalTimeSeriesPlotOutput}
 \alias{generalTimeSeriesPlotOutput}
-\title{Time series plot in the Climex app.}
+\title{Time series plot in the \code{climex} app.}
 \usage{
 generalTimeSeriesPlotOutput(id)
 }
@@ -10,15 +10,15 @@ generalTimeSeriesPlotOutput(id)
 \item{id}{Namespace prefix}
 }
 \value{
-tabBox
+\code{\link[shinydashboard]{tabBox}}
 }
 \description{
-TabBox containing a plot of the pure and
-  deseasonalized time series as well as one of all its extreme
-  events.
+\code{\link[shinydashboard]{tabBox}} containing a plot of the
+  pure and deseasonalized time series as well as one of all its
+  extreme events.
 }
 \details{
-This function provides the ouput to
+This function provides the output corresponding to
   \code{\link{generalTimeSeriesPlot}}. Both the pure time series
   and the deseasonalized one are rendered using the \pkg{dygraphs}
   package. The extreme events are rendered using the \pkg{ggplot2}

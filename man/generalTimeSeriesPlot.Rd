@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_plotting.R
 \name{generalTimeSeriesPlot}
 \alias{generalTimeSeriesPlot}
-\title{Time series plot in the Climex app.}
+\title{Time series plot in the \code{climex} app.}
 \usage{
 generalTimeSeriesPlot(input, output, session, reactive.extreme,
   selectDataBase, selectDataType, radioEvdStatistics, sliderThreshold,
@@ -21,13 +21,14 @@ three elements: 1. the blocked time series, 2. the
 deseasonalized time series, and 3. the pure time series.}
 
 \item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+data source. It is either of one of the names of the provided
+list in the \code{list.data.sources} argument of the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive} object containing random numbers
+drawn from the distribution specified using
+\code{radioEvdStatistics}. Default = a random element of
+the provided input.}
 
 \item{selectDataType}{Character (select) input to determine which
 set of measurements should be used. This choice is important if
@@ -35,8 +36,7 @@ the input of the \code{\link{climex}} function was not just a
 list of different station data, but a list of such lists. This
 additional layer of lists can e.g. represent different types of
 measurement data like precipitation and temperature. Their names
-are derived from the names of the input list (see \code{link{
-menuSelectDataType}}).}
+are derived from the names of the input list.}
 
 \item{radioEvdStatistics}{Character (radio) input determining
 whether the GEV or GP distribution shall be fitted to the
@@ -50,7 +50,7 @@ end point.}
 
 \item{buttonMinMax}{Character (radio) input determining whether
 the GEV/GP distribution shall be fitted to the smallest or
-biggest vales. Choices: c( "Max", "Min ), default = "Max".}
+biggest values. Choices: c( "Max", "Min ), default = "Max".}
 }
 \value{
 Reactive value holding a logical vector indicating which
@@ -58,14 +58,14 @@ Reactive value holding a logical vector indicating which
   \code{\link{data.extremes}} to use after clicking and brushing.
 }
 \description{
-TabBox containing a plot of the pure and
-  deseasonalized time series as well as one of all its extreme
-  events.
+\code{\link[shinydashboard]{tabBox}} containing a plot of the
+  pure and deseasonalized time series as well as one of all its
+  extreme events.
 }
 \details{
 Both the pure time series and the deseasonalized one are
-  rendered using the dygraphs package. The extreme events are
-  rendered using the \pkg{ggplot2} package. For the later one
+  rendered using the \pkg{dygraphs} package. The extreme events
+  are rendered using the \pkg{ggplot2} package. For the later one
   clicking or brushing points enables the user to exclude
   them. This is handled by a reactive value returned by this
   function.

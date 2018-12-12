@@ -2,15 +2,15 @@
 % Please edit documentation in R/climex_sidebar.R
 \name{sidebarImprintInput}
 \alias{sidebarImprintInput}
-\title{Imprint of the Climex app}
+\title{Imprint of the \code{climex} app}
 \usage{
 sidebarImprintInput()
 }
 \value{
-menuItemOutput
+\code{\link[shinydashboard]{menuItemOutput}}
 }
 \description{
-Linking the imprint of the climex application
+Linking the imprint of the \code{climex} application.
 }
 \details{
 Whenever the web app is run using shiny-server a link to
@@ -20,7 +20,6 @@ Whenever the web app is run using shiny-server a link to
 }
 \seealso{
 Other sidebar: \code{\link{data.selection}},
-  \code{\link{file.loading}},
   \code{\link{sidebarCleaningInput}},
   \code{\link{sidebarCleaning}},
   \code{\link{sidebarDataBaseInput}},

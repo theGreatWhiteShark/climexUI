@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_plotting.R
 \name{generalFitPlot}
 \alias{generalFitPlot}
-\title{Plot of the fits in the Climex app}
+\title{Plot of the fits in the \code{climex} app}
 \usage{
 generalFitPlot(input, output, session, reactive.extreme, reactive.rows,
   reactive.fitting, buttonMinMax, radioEvdStatistics, selectDataBase,
@@ -25,26 +25,29 @@ indicating which values of the time series provided by
 \code{\link{data.extremes}} to use after clicking and brushing.}
 
 \item{reactive.fitting}{Reactive value containing the results of
-the fit (\code{\link{fit.gev}} or \code{\link{fit.gpd}}
-depending on radioEvdStatistic) to the blocked time series in
-reactive.extreme()[[ 1 ]].}
+the fit (\code{\link[climex]{fit.gev}} or
+\code{\link[climex]{fit.gpd}} depending on
+\code{radioEvdStatistic}) to the blocked time series in 
+in the first element of the list returned by
+\code{\link{data.extremes}}.}
 
 \item{buttonMinMax}{Character (radio) input determining whether
 the GEV/GP distribution shall be fitted to the smallest or
-biggest vales. Choices: c( "Max", "Min ), default = "Max".}
+biggest values. Choices: c( "Max", "Min ), default = "Max".}
 
 \item{radioEvdStatistics}{Character (radio) input determining
 whether the GEV or GP distribution shall be fitted to the
 data. Choices: c( "GEV", "GP" ), default = "GEV".}
 
 \item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+data source. It is either of one of the names of the provided
+list in the \code{list.data.sources} argument of the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive} object containing random numbers
+drawn from the distribution specified using
+\code{radioEvdStatistics}. Default = a random element of
+the provided input.}
 
 \item{selectDataType}{Character (select) input to determine which
 set of measurements should be used. This choice is important if
@@ -52,8 +55,7 @@ the input of the \code{\link{climex}} function was not just a
 list of different station data, but a list of such lists. This
 additional layer of lists can e.g. represent different types of
 measurement data like precipitation and temperature. Their names
-are derived from the names of the input list (see \code{link{
-menuSelectDataType}}).}
+are derived from the names of the input list.}
 
 \item{sliderThreshold}{Numerical (slider) input determining the
 threshold used within the GP fit and the extraction of the
@@ -62,11 +64,11 @@ deseasonalized time series (rounded). Default: 0.8* the upper
 end point.}
 }
 \value{
-Nothing in particular.
+Either \code{NULL} or the last \pkg{ggplot2} plot.
 }
 \description{
-Box containing the plot of the performed GEV/GP
-  fitting as well as three goodness-of-fit plots.
+\code{\link[shinydashboard]{box}} containing the plot of the
+  performed GEV/GP fit as well as three goodness-of-fit plots.
 }
 \details{
 All four plots are rendered using the \pkg{ggplot2}

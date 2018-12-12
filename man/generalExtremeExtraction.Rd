@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_preprocessing.R
 \name{generalExtremeExtraction}
 \alias{generalExtremeExtraction}
-\title{Extracting extreme events in the Climex app}
+\title{Extracting extreme events in the \code{climex} app}
 \usage{
 generalExtremeExtraction(radioEvdStatistics, deseasonalize.interactive,
   selectDeseasonalize, buttonMinMax, reactive.selection, selectDataBase)
@@ -13,17 +13,17 @@ whether the GEV or GP distribution shall be fitted to the
 data. Choices: c( "GEV", "GP" ), default = "GEV".}
 
 \item{deseasonalize.interactive}{Function used to remove
-seasonality from a given time
-series. \code{\link{deseasonalize.interactive}}}
+seasonality from a given time series. See
+\code{\link{deseasonalize.interactive}}}
 
 \item{selectDeseasonalize}{Character (select) input determining
 which deseasonalization method should be used to remove the
-short-range correlations from the provided time series.
-\code{\link{deseasonalizeSelectionInput}}}
+short-range correlations from the provided time series. See
+\code{\link{deseasonalizeSelectionInput}}.}
 
 \item{buttonMinMax}{Character (radio) input determining whether
 the GEV/GP distribution shall be fitted to the smallest or
-biggest vales. Choices: c( "Max", "Min ), default = "Max".}
+biggest values. Choices: c( "Max", "Min ), default = "Max".}
 
 \item{reactive.selection}{Reactive value contains the class
 \pkg{xts} time series of the selected input or artificially
@@ -31,16 +31,17 @@ generated data chosen via the sidebar or the leaflet
 map. \code{\link{data.selection}}}
 
 \item{selectDataBase}{Character (select) input to determine the
-data source. In the default installation there are two
-options: c( "Input", "Artificial data" ). The first one
-uses the database loaded at the initialization of the climex app
-(see the \code{\link{climex}}). The second one allows the user 
-to produce random numbers distributed according to the GEV or GP
-distribution. Determined by menuSelectDataBase. Default =
-"Input".}
+data source. It is either of one of the names of the provided
+list in the \code{list.data.sources} argument of the
+\code{\link{climex}} function or \emph{Artificial data}. In case
+of the latter choice, the function \code{\link{data.selection}}
+will provide a \emph{reactive} object containing random numbers
+drawn from the distribution specified using
+\code{radioEvdStatistics}. Default = a random element of
+the provided input.}
 }
 \value{
-renderMenu
+\code{\link[shinydashboard]{renderMenu}}
 }
 \description{
 Extract the extreme events from a given time series.

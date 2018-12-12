@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_sidebar.R
 \name{sidebarImprint}
 \alias{sidebarImprint}
-\title{Imprint of the Climex app}
+\title{Imprint of the \code{climex} app}
 \usage{
 sidebarImprint(session)
 }
@@ -11,10 +11,10 @@ sidebarImprint(session)
 \url{http://shiny.rstudio.com/articles/modules.html}}
 }
 \value{
-div
+\code{\link[shiny]{div}}
 }
 \description{
-Linking the imprint of the climex application
+Linking the imprint of the \code{climex} application.
 }
 \details{
 Whenever the web app is run using shiny-server a link to
@@ -23,7 +23,6 @@ Whenever the web app is run using shiny-server a link to
 }
 \seealso{
 Other sidebar: \code{\link{data.selection}},
-  \code{\link{file.loading}},
   \code{\link{sidebarCleaningInput}},
   \code{\link{sidebarCleaning}},
   \code{\link{sidebarDataBaseInput}},

@@ -2,7 +2,7 @@
 % Please edit documentation in R/climex_sidebar.R
 \name{sidebarLoadingGif}
 \alias{sidebarLoadingGif}
-\title{Gif in the Climex app}
+\title{Gif in the \code{climex} app}
 \usage{
 sidebarLoadingGif(input, output, session)
 }
@@ -15,7 +15,7 @@ sidebarLoadingGif(input, output, session)
 \item{session}{Namespace session.}
 }
 \value{
-div
+\code{\link[shiny]{div}}
 }
 \description{
 Showing a Gif in the sidebar while the app is
@@ -31,7 +31,6 @@ This module will display a loading gif. Most of the code
 }
 \seealso{
 Other sidebar: \code{\link{data.selection}},
-  \code{\link{file.loading}},
   \code{\link{sidebarCleaningInput}},
   \code{\link{sidebarCleaning}},
   \code{\link{sidebarDataBaseInput}},

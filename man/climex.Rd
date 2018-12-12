@@ -2,31 +2,75 @@
 % Please edit documentation in R/shiny_base.R
 \name{climex}
 \alias{climex}
-\title{The Climex app initialization}
+\title{The \code{climex} app initialization}
 \usage{
 climex(list.data.sources = NULL, data.frame.positions = NULL,
   resource.directory = NULL)
 }
 \arguments{
-\item{resource.directory}{Folder all the resources of the app,
-like JavaScript scripts, images etc., will be copied in. If
-NULL, the content will be copied in the directory contained in
-the global \emph{climex.path} variable pointing at
-\emph{~/R/climex/}. Note that the folder won't be removed
-afterwards. Default: NULL.}
+\item{list.data.sources}{A named \code{list} of named \code{list}s
+of \pkg{xts}-class time series or \code{data.frame}s. The first
+level of hierarchy in the list corresponds to the different
+climatological variables, which will be accessible via the first
+drop down menu in the sidebar. The second level corresponds to
+the names of the individual stations measurements of the top
+level variable are available for. The series themselves can be
+provided either as a \pkg{xts} object to \code{data.frame}
+containing a numerical \code{value} and a time-date \code{date}
+column.}
+
+\item{data.frame.positions}{Either a \code{data.frame} containing
+at least the named columns \emph{name}, \emph{longitude}, and
+\emph{latitude} or a \code{\link[sp]{SpatialPointsDataFrame}}
+containing a \code{name} column in its \code{data} slot.}
+
+\item{resource.directory}{Folder  all the  resources of  the app,
+like  JavaScript scripts,  images etc.,  will be  copied in.  If
+\code{NULL},  the  content  will  be  copied  in  the  directory
+contained in the global  \code{climex.path} variable pointing at
+\emph{~/R/climex/}.  Note  that  the  folder  won't  be  removed
+afterwards. Default: \code{NULL}.}
 }
 \value{
-starts a shiny app
+Starts a \pkg{shiny} app
 }
 \description{
-Shiny app combining most of the tools used in extreme
-  value analysis using the generalized extreme value (GEV) or
-  generalized Pareto (GP) fitting via maximum likelihood.
+\pkg{shiny} app combining most tools of the extreme
+  value analysis using the generalized extreme value (GEV) and
+  generalized Pareto (GP) distribution and providing an interface
+  to most of the functionality of the \pkg{climex} package.
 }
 \details{
-This app needs its own css file. In order to assure its
-  correct behavior, the folder \emph{resource.directory} will be
-  generated to store all the necessary configuration scripts.
+This app needs its own \emph{.css}, \emph{.js} files, and
+  images.  In order  to assure  its correct  behavior, the  folder
+  \code{resource.directory}  will be  generated to  store all  the
+  necessary   configuration  scripts.   The  configuration   files
+  themselves are provided along with the \pkg{climexUI} package.
+
+  The data, which will be handled by the app,  has to be provided
+  using \code{list.data.sources} in a format as described in the
+  parameter section. In addition, the \code{data.frame.positions}
+  argument has to contain further information about the data
+  linking the names of the individual stations (contained in the
+  names of the \code{list} elements in the second level of
+  hierarchy in \code{list.data.sources}) to their longitude and
+  latitude. Both inputs will be checked using the
+  \code{\link{check.input}} function and only if it was successful,
+  the data can be accessed in the application. If not, the
+  fallback data \code{list.data.sources.fallback} and
+  \code{data.frame.positions.fallback} will be used instead. You
+  can also use them as a general guide for the format the
+  \pkg{climexUI} package is able to handle internally.
+
+  If you are lacking time series altogether, you can use the
+  \url{https://gitlab.com/theGreatWhiteShark/dwd2r} package to
+  download large sets of climatological quantities from the FTP
+  servers of the German weather service (DWD).
+
+  After checking the data, the function will save them in a
+  \emph{input.RData} file, which will be loaded by the starting
+  \pkg{shiny} application. This way it can be use easily both
+  locally and via shiny-server.
 }
 \seealso{
 Other top-level: \code{\link{climex.server}},
