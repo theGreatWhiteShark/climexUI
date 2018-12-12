@@ -4,7 +4,7 @@
 \alias{check.input}
 \title{Check whether the input fulfills our requirements.}
 \usage{
-check.input(list.data.sources, data.frame.positions)
+check.input(list.data.sources, data.frame.positions, silent = FALSE)
 }
 \arguments{
 \item{list.data.sources}{A named list of \pkg{xts}-class time

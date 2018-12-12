@@ -6,7 +6,7 @@
 \usage{
 data.selection(reactive.chosen, selectDataSource, selectDataBase,
   sliderThreshold, radioEvdStatistics, sliderArtificialDataLocation,
-  sliderArtificialDataScale, sliderArtificialDataShape, buttonDrawTS,
+  sliderArtificialDataScale, sliderArtificialDataShape, reactive.redrawing,
   sliderSeriesLength)
 }
 \arguments{
@@ -54,13 +54,13 @@ providing the shape parameter to generate an artificial time
 series. For input$selectDataBase != "Artificial data" this
 argument will be NULL.}
 
-\item{buttonDrawTS}{Action button used to draw a time series when
-'artificial data' is chosen in selectDataBase(). If not chosen,
-this button will not be defined.}
-
 \item{sliderSeriesLength}{Numerical slider determining the length
 of an artificial time series. This one will only be present when
 selectDataBase is set to "Artificial data".}
+
+\item{buttonDrawTS}{Action button used to draw a time series when
+'artificial data' is chosen in selectDataBase(). If not chosen,
+this button will not be defined.}
 }
 \value{
 Reactive value containing a 'xts' class time series.
