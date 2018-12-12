@@ -28,15 +28,20 @@
 ##'     \item{ data.frame.positions: Same format as input }
 ##'  }
 ##' @author Philipp Mueller
-check.input <- function( list.data.sources, data.frame.positions ){
+check.input <- function( list.data.sources, data.frame.positions,
+                        silent = FALSE ){
   ## Checking format
   check.result <- TRUE
   if ( !is.list( list.data.sources ) ){
-    warning( "Please provide list.data.sources as a list of 'xts'-class objects!" )
+    if ( !silent ){
+      warning( "Please provide list.data.sources as a list of 'xts'-class objects!" )
+    }
     check.result <- FALSE
   }
   if ( !all( Reduce( c, lapply( list.data.sources, is.list ) ) ) ){
-    warning( "All elements of list.data.sources have to be lists!" )
+    if ( !silent ){
+      warning( "All elements of list.data.sources have to be lists!" )
+    }
     check.result <- FALSE
   }
   if ( !all( Reduce( c, lapply( list.data.sources, function( ss )
@@ -46,43 +51,54 @@ check.input <- function( list.data.sources, data.frame.positions ){
         ## This second data format allows the individual time series
         ## to be of type 'data.frame'. Have to be converted into class
         ## 'xts'.
-        print( "Converting the input data into class 'xts' for internal handling..." )
+        if ( !silent ){
+          print( "Converting the input data into class 'xts' for internal handling..." )
+        }
         ## An auxiliary object will be generated holding both the
         ## successfully converted series and those replaced by NULL
         ## since their conversion failed.
         list.data.sources.aux <-
           lapply( list.data.sources, function( ss )
-            lapply( ss, convert.data.frame.to.xts ) )
+            lapply( ss, climexUI:::convert.data.frame.to.xts ) )
         ## Discard all series for which the conversion did fail.
         list.data.sources <-
           lapply( list.data.sources.aux, function( ss )
             ss[ !Reduce( c, lapply( ss, is.null ) ) ] )
       } else {
-        warning( "All elements of the lists within list.data.sources have to be 'xts'-class objects!" )
+        if ( !silent ){
+          warning( "All elements of the lists within list.data.sources have to be 'xts'-class objects!" )
+        }
         check.result <- FALSE
       }
   }
   if ( is.null( names( list.data.sources ) ) ||
        any( Reduce( c, lapply( list.data.sources, function( ll )
-                              is.null( names( ll ) ) ) ) ) ){
-    warning( "All elements in list.data.sources have to be named!" )
+         is.null( names( ll ) ) ) ) ) ){
+    if ( !silent ){
+      warning( "All elements in list.data.sources have to be named!" )
+    }
     check.result <- FALSE
   }
   if ( !is.data.frame( data.frame.positions ) &&
       !any( class( data.frame.positions ) == "SpatialPointsDataFrame" )
       ){
-    warning( "data.frame.positions has to be a data.frame or a SpatialPointsDataFrame!" )
+    if ( !silent ){
+      warning( "data.frame.positions has to be a data.frame or a SpatialPointsDataFrame!" )
+    }
     check.result <- FALSE
   } else if ( is.data.frame( data.frame.positions ) &&
               !( all( c( "name", "longitude", "latitude" ) %in%
                       colnames( data.frame.positions ) ) ) ){
-    warning(
-        "data.frame.positions has to have at least the columns 'name', 'longitude', and 'latitude" )
+    if ( !silent ){
+      warning( "data.frame.positions has to have at least the columns 'name', 'longitude', and 'latitude" )
+    }
     check.result <- FALSE
   } else if ( any( class( data.frame.positions ) ==
                    "SpatialPointsDataFrame" ) &&
-             !( "name" %in% colnames( data.frame.positions@data ) ) ){
-    warning( "a column called 'name' containing the corresponding station names must be included in data.frame.positions!" )
+              !( "name" %in% colnames( data.frame.positions@data ) ) ){
+    if ( !silent ){
+      warning( "a column called 'name' containing the corresponding station names must be included in data.frame.positions!" )
+    }
     check.results <- FALSE
   }
 
