@@ -1,6 +1,6 @@
-This is a short guide to install and run the climex server on your
-computer. Since we will use shiny-server it is not just accessible via
-localhost but throughout your entire network.
+This is a short guide how to install and run the climex server on your
+computer. Since we will use a shiny-server, it is not just accessible
+via localhost but throughout your entire network.
 
 ## Prerequisites
 
@@ -10,11 +10,13 @@ guide](https://github.com/rstudio/shiny-server/wiki/Building-Shiny-Server-from-S
 of the
 [shiny-server](https://www.rstudio.com/products/shiny/shiny-server/).
 
-In addition, you have to have the **climex** and the **climexUI**
-package install on your system.
+In addition, you have to have both the
+[climex](https://gitlab.com/theGreatWhiteShark/climex) and the
+[climexUI](https://gitlab.com/theGreatWhiteShark/climexUI) package
+install on your system.
 
 ```{bash}
-## Switching to the superuse
+## Switching to the superuser
 sudo su
 
 ## Starting R (if you have your own compiled version, make sure its 
@@ -27,13 +29,13 @@ R --no-init-file
 install.packages( "devtools" )
 
 ## Installing the newest climex version on the master branch
-devtools::install_github( "theGreatWhiteShark/climex" )
-devtools::install_github( "theGreatWhiteShark/climexUI" )
+devtools::install_gitlab( "theGreatWhiteShark/climex" )
+devtools::install_gitlab( "theGreatWhiteShark/climexUI" )
 ```
 
 ## Configuration
 
-In order to run the server you have to copy all its configuration
+In order to run the server, you have to copy all its configuration
 files and scripts into shiny-server's directories
 
 ```{bash}
@@ -48,25 +50,6 @@ sudo cp .Rprofile /home/shiny/.Rprofile
 sudo chown shiny /home/shiny/.Rprofile /srv/shiny-server/*
 ```
 
-Now we need the station data of the German weather service to supply
-the time series used within the climex server.
-
-```{bash}
-## Change to the shiny user 
-sudo su shiny
-
-## Start an R process to download the data
-R --no-init-file
-```
-
-```{R}
-## Load the climex package
-require( climex )
-
-## Set the climex home folder to the server's assets folder (since we
-## omitted the .Rprofile file)
-options( climex.path = "/srv/shiny-server/assets/" )
-
-## Download the DWD data into the asset. This will take a while.
-download.data.dwd()
-```
+Finally, you need to store your data in the proper format (see
+[vignette](../../vignettes/climex_app.Rmd) of the package) into a file
+called _input.RData_ in the _assets_ folder.
