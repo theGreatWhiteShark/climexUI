@@ -9,34 +9,34 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# About
-This vignette provides an introduction to the climex package's web
-application run on localhost. It will guide you through both its setup
-and usage.
+This vignette provides an introduction into the basic handling of the
+**climex** web app and how its run on your local computer.
 
 
 # Prerequisites
 
-The climex web app needs several files to power it and all of them
-will be stored in *~/R/climex/* folder. If your are fine with this
-default behavior, feel free to skip the next three paragraphs.
+### Installation path
 
-A web app, like the Shiny-based one provided by this package, needs
-loads of different files: .css files to shape and beautify its
-appearance, .js files enabling the app to perform logic and
+The **climex** web app needs several files to be powered and all of them
+will be stored in a folder defined in the option `climex.path`, which
+will point to *~/R/climex/* per default. If your are fine with this
+choice, feel free to skip the remainder of this subsection.
+
+A web app, like the **shiny**-based one provided by this package, needs
+loads of different files: _.css_ files to shape and beautify its
+appearance, _.js_ files enabling the app to perform logic and
 calculations within your browser to provide further customization and
-a more natural interaction, all the different displayed images, gifs,
-and movies etc.
+a more natural interaction, all the displayed images and gifs etc.
 
-Fortunately you don't have to care about all these files since the
+Fortunately, you don't have to care about all these files since the
 wrapper function `climex()` will take them from the package's
-installation path and group them all in a certain folder the app will
-be run in. The only thing you have to care about is *where* all these
-things happen.
+installation path and copy them all in the `climex.path` folder the
+app will be run in. The only thing you have to care about is *where*
+all these things are copied to.
 
-By default all the app's resources will be stored in your home in a
-folder called *~/R/climex/*. To change its path, add the following
-lines to the R configuration file *~/.Rprofile* in your home.
+By default all resources will be stored in your home in a folder
+called *~/R/climex/*. To change its path, add the following lines to
+the R configuration file *~/.Rprofile* in your home.
 
 ```{r configuration, eval=FALSE}
 ## Replace PATH by the directory you want to store all files related
@@ -44,43 +44,85 @@ lines to the R configuration file *~/.Rprofile* in your home.
 options( climex.path = "PATH" )
 ```
 
-After setting the *climex.path* option, you need to download the daily
-station data [provided by the German weather service
-(DWD)](ftp://ftp-cdc.dwd.de/pub/CDC/observations_germany/climate/daily/)
-to power the leaflet map in the first tab. Just open a R shell in your
-terminal and enter the following commands
+### Input data
 
-```{r DWD, eval=FALSE}
-## Loading the climex package
-library( climex )
-## Downloading the data of the DWD. Be sure to don't specify the
-## data.type argument or use data.type = "default" in here. The app is
-## just tested of max/min temperature and precipitation yet.
-download.data.dwd()
-```
+The web app provided in the **climexUI** package is meant to be a
+convenient interface to perform the extreme value analysis
+interactively on a large set of station data. But the main ingredient,
+the data itself, has to be provided by the user herself. If you
+haven't gathered lots of data yet, don't worry. You can use the
+[dwd2r](https://gitlab.com/theGreatWhiteShark/dwd2r) package to
+retrieve quite a number of climatological time series measured within
+Germany (and provided by the German weather service (DWD)).
 
-For a more thorough explanation of the web scrapping and downloading
-capabilities of this package please refer to the **Downloading and
-formatting of the station data of the DWD** section in the package's
-second vignette.
+The app itself should be started using the auxiliary function
+`climex()` and the data has to be provided using its
+`list.data.sources` input argument in a very particular format. The
+basic time series can have two different formats. They must be either
+of class **xts** or **data.frame**s containing two columns called
+_value_ and _date_ where the former is of class **numeric** and the
+latter is of class **Date**. All these time series have to be elements
+of a named **list** with the names corresponding to the ones of the
+individual stations the data was measured at. From one or many of
+those lists another named **list** will be constructed with its names
+corresponding to the ones of the individual data sets (lists of time
+series). This is, finally, the proper format of the
+`list.data.sources` input argument. The elements of the top level
+(data sets) and second level lists (stations) can be selected using
+two drop-down menus in the sidebar of the application. Examples for
+well formatted second level lists can be obtained by running the
+`dwd.download()` function of the **dwd2r** package with the
+`batch.choices = c( 1, 1, 5, 1)` argument. The original intent was to
+group different climatological quantities in the top level of the list
+and the corresponding stations into the second level. But you can use
+the first level of hierarchy of `list.data.sources` as you like and
+group the data in a way that fits you best. However, the second level
+_must_ be named according to the corresponding stations and the name of
+the list elements containing the time series will be used to extract the
+position data from the second input argument `data.frame.positions`.
 
-With all the DWD data at hand, you are free to lunch the climex app.
+`data.frame.positions` is an object linking the names of the stations
+used in `list.data.sources` with the corresponding geographical
+positions and has to be, again, provided in a very particular
+format. One can either use a **data.frame** or a
+**SpatialPointsDataFrame** provided by the **sp** package. The former
+one has to contain at least three columns named _longitude_,
+_latitude_, and _name_ with the first two being of class **numeric**
+and the last of class **character**. The spatial object, on the other
+hand, has to contain the corresponding names of the station in a
+column called _name_ of the **data.frame** in its _data_ slot. An
+example for such an object can be found in the `station.positions`
+object created when invoking the `dwd.download()` function of the
+**dwd2r** package with the `batch.choices = c( 1, 1, 5, 1 )`
+argument. Please note that the names are supposed to be unique and
+that all time series in `list.data.sources` who's names are not
+present in `data.frame.positions` won't be handled by the web app at
+all.
 
-```{r wrapper, eval = FALSE, dependson = "prerequisites"}
-library( climex )
-## Lunching the climex app. Note: sometimes only the heading of the app
-## is displayed when running it for the first time. In this case just
-## close the app and start it again. Not quite sure why this is
-## happening.
+### Starting the climex web application
+
+It is strongly advised to start the web application provided in the
+**climexUI** package using the `climex()` auxiliary function and the
+input arguments described in the previous section. It will ensure the
+data is properly formatted, it will resort to some fallback data if
+this is not the case, and will copy all required scripts and files to
+the folder the application is started in.
+
+```{r wrapper, eval = FALSE}
+library( climexUI )
 climex()
 ```
 
-Now your R shell will open a server on your computer and the climex
+Now, your R shell will open a server on your computer and the climex
 app will be started in a new tab of your default web browser (Firefox
-preferred).
+preferred. Don't feed the Google!). To **stop the app** just go to
+your R shell and press Ctrl-c two times in a row.
 
-To **stop the app** just go to your R shell and press Ctrl-c two times
-in a row.
+Internally, the `climex()` function will run `runApp()` of the
+**shiny** package in the prepared folder. The `climex.server()` and
+`climex.ui()` functions are taking care of the actual work. The former
+one will load the a file called _input.RData_ from the prerequisite
+folder, which was written by the `climex()` function.
 
 # Map tab
 
@@ -91,97 +133,101 @@ different stations.
 
 While working with tens or hundreds of time series from different
 geographical sites, it is always hard to keep their spatial relations,
-like the distance between the stations or their individual altitude,
-in mind. To overcome this problem, a map-based selection interface was
-introduced in addition to the *Station* selector in the sidebar.
+like the distance between the stations, in mind. To overcome this
+problem, a map-based selection interface was introduced in addition to
+the *Station* selector in the sidebar.
 
 Apart from being a selection interface for the station data the
 **Map** tab features the following functions:
 
 - Via the **Minimal length** slider only those time series containing
-  more years than the chosen value will be shown on the map. This
-  feature is extremely useful for finding long time series in the
-  vastness of all your provided station data.
+  more years than the chosen value will be shown on the map and will
+  be accessible via the sidebar. This feature is extremely useful for
+  finding long time series in the vastness of the provided data.
 - When selecting a station via mouse click a summary statistic
-  containing the station's name as well as its 20, 50 and 100 year
+  containing the station's name as well as its 20, 50, and 100 year
   return level will be displayed in the upper right corner of the map.
-- In the control panel you can choose either the tiles of the
-  [OpenTopoMaps](https://opentopomap.org/) or the once of the default
-  [OpenStreetMaps](https://www.openstreetmap.org/) to provide your
-  map. While the first one is more instructive in the context of
-  climatic time series it also faced some down times
-  recently. Therefore you always can use the default OSM map as a
-  fallback solution.
-- Using the **Return level** slider and the attached **Return level**
-  slider the chosen return level will be calculated for all shown
-  stations.
+- In the control panel you can choose either the tiles of
+  [OpenTopoMaps](https://opentopomap.org/) or
+  [OpenStreetMaps](https://www.openstreetmap.org/) to provide an
+  underlying map. While the first one is more instructive in the
+  context of climatic time series, I also faced some downtimes at some
+  points in the past. Therefore, you always can use the default OSM map
+  as a fallback solution.
+- Using the **Return level** slider and the corresponding **Calculate
+  return levels** button, the chosen return level will be calculated
+  for all stations shown on the map.
 - After the calculation finished (the cat in the wheel disappeared),
   an additional select item appears where you can choose to display
-  the stations as blue markers (*stations*) and/or their return level
-  as colored cirlces (*returns*).
-  But beware: this can take up to several minutes depending an the
-  number of stations displayed! Since all stations selected via the
-  Minimal length slider will be considered in the calculation and not
-  just the ones displayed after zooming in, only a limited amount of
-  stations is supported when running the climex app within a Shiny
-  server.
+  the stations as blue markers (*stations*) and/or their return levels
+  as colored cirlces (*returns*).  But beware: this can take up to
+  several minutes depending an the number of stations displayed! Since
+  all stations selected via the **Minimal length** slider will be
+  considered in the calculation and not just the ones displayed after
+  zooming in, only a limited amount of stations is supported when
+  running the climex app within a Shiny server (e.g. at
+  climex.pks.mpg.de). Locally, however, you can use as much stations
+  as you like.
 
 
 All the changes to the preprocessing options in the **General** tab
 will be considered while calculating the summary statistics and the
-return level of all displayed stations.
+return levels of all displayed stations.
   
-NOTE: The map is based on my fork of the leaflet package instead of
-the original one since the developer seem to dislike my [pull
+NOTE: The map is based on my fork of the **leaflet** package instead
+of the original one since the developer seem to dislike my [pull
 request](https://github.com/rstudio/leaflet/pull/342) for horizontal
 and sizable legends. Without this the legend of the colored return
 level markers would look just to weird and misplaced.
 
 # The sidebar
 
-All the different stations you select either via the **Map** tab or
-the **Station** drop-down menu come in three different flavors: as
-daily maximal and minimal temperature and as daily precipitation
-data. Which of them to use can be selected through the **Measured
-variable** drop-down menu.
+As described in a previous section, the available data is structured
+into two levels. The top level can be selected via the **Data set**
+drop-down menu and the corresponding station of the second level via
+the **Station** menu.
 
 Right below all these drop-down menus there is a very important radio
 button: the **Remove incomplete years** or **Declustering of the
-data** button (depending of the choice of the extreme value
+data** button (depending on the choice of the extreme value
 distribution in the **Options** box in the **General** tab). This
 button will ensure your time series is getting cleaned and short-range
-correlations as well as artifacts are getting removed. So disable it
-just if you really know what you are doing!
+correlations as well as artifacts are getting removed before the
+extreme value analysis does take place. So, only disable it if you
+really know what you are doing!
 
-Apart from the time series provided by the German weather service
-(DWD) you can also perform the analysis on artificial data by
-selecting *Artificial data* in the **Data base** drop-down menu. Once
-selected, your time series will be sampled from either the generalized
-extreme value (GEV) or generalized Pareto (GP) distribution (as chosen
-within the **Options** box in the **General** tab). You can control
-the sampling process by adjusting the **Location**, **Scale**, and
-**Shape** slider for the distribution's parameters and the **Length**
-one for the number of points to sample from the distribution. Every
-time you update one of these sliders the time series is getting
-redrawn. Instead you can also use **Draw** button.
+But apart from the input data provided to the `climex()` function,
+the web app is also able to draw and analyse random series distributed
+according to the generalized extreme value (GEV) or generalize Pareto
+(GP) distribution by selecting *Artificial data* in the **Data set**
+drop-down menu. You can control the sampling process by adjusting the
+**Location**, **Scale**, and **Shape** slider for the distribution's
+parameters and the **Length** one for the number of points to be
+sampled. Every time you update one of these sliders the time series is
+getting redrawn. In addition, you can also use **Draw** button to
+redraw it manually.
 
 # General tab
 
 This tab provides both an interface to change the preprocessing
 options used throughout the whole application as well as a variety of
 tools to analyze an individual time series. Keep in mind: whenever you
-change an option within this tab it will affect all the optimization
-performed in the entire app.
+change an option within this tab it will affect the analysis performed
+in the entire app.
 
 ### *GEV fit* box
 
-This box contain four different plots: 
+This box contains four different plots: 
 
 - The overall fitting result consisting of a blueish histogram of the
-  extreme events of the time series and the orange-colored GEV density
-  function constructed using the fitted parameters.
-- Three goodness-of-fit plots highlighting the quality of the
-  individual fit. From top to bottom: a [p-p plot](https://en.wikipedia.org/wiki/P%E2%80%93P_plot), a [q-q plot](https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot), and a return level plot (see Stuart Coles, 2001, p. 58).
+  extreme events of the time series and the orange-colored GEV/GP
+  probability density distribution constructed using the fitted
+  parameters.
+- Three goodness-of-fit plots highlighting the quality of the current
+  fit. From top to bottom: a [p-p
+  plot](https://en.wikipedia.org/wiki/P%E2%80%93P_plot), a [q-q
+  plot](https://en.wikipedia.org/wiki/Q%E2%80%93Q_plot), and a return
+  level plot (see Stuart Coles, 2001, p. 58).
 
 ### *Options* box
 
@@ -196,23 +242,23 @@ This radio buttons control whether to fit the generalized extreme value
 #### Box length in days | Threshold
 
 Via this slider the extreme events will be obtained from your time
-series. Depending on the chosen limiting distribution it will either
-determines the number of days of a time series constituting a block in
-the GEV approach or determines the height of the threshold above which
-all event will be considered to be extreme events. The default value
-of one year for the block method is recommended especially since the
-user can change the deseasonalization method and may end up with
-seasonal correlations in the data.
+series. Depending on the choice of limiting distribution, it will
+either determine the number of days of a time series constituting a
+block in the GEV approach or the height of the threshold above which
+all events will be considered extreme. The default value of one year
+for the block method is recommended especially since the user can
+change the deseasonalization method and may end up with seasonal
+correlations in the data.
 
 Remember: The approximation of the histogram using both the GEV and
-the GP distribution is only valid for asymptotic block length and
-threshold height. So don't pick to low values!
+the GP distribution is only valid for an asymptotic block length and
+threshold height. So don't pick too low values!
 
 #### Type of extreme
 
-If set to *Min*, the GEV distribution will be fitted to the minimal
-extremes. In this approach only the most lowest value in each block of
-the time series will be extracted.
+If set to *Min*, the GEV distribution will be fitted to the block
+_minima_ and the GP distribution to all events _below_ the specified
+threshold.
 
 #### Deseasonalization method
 
@@ -221,7 +267,7 @@ short-range correlations in your time series introduced by the annual
 cycle. Per default the
 [anomalies](https://en.wikipedia.org/wiki/Anomaly_(natural_sciences)#Atmospheric_sciences)
 will be calculated. But you can also
-pick other R-based implementations like
+pick other **R**-based implementations like
 [stl](https://stat.ethz.ch/R-manual/R-patched/library/stats/html/stl.html),
 [decompose](https://stat.ethz.ch/R-manual/R-patched/library/stats/html/decompose.html),
 and the **ds** function from the
@@ -232,7 +278,7 @@ package.
 
 This table displays several details of the GEV fitting procedure:
 
-- The GEV/GP parameters *location*, *scale* and *shape*
+- The GEV/GP parameters *location*, *scale*, and *shape*
 - The augmented negative log-likelihood (*nllh*) of the fit as well as
   the
   [Akaike](https://en.wikipedia.org/wiki/Akaike_information_criterion)
@@ -243,14 +289,14 @@ This table displays several details of the GEV fitting procedure:
 For the distribution's parameter and the return level a small change
 while varying the preprocessing options does suggest the stability of
 the fitting procedure and thus a high quality of the time series. This
-will be indicated by green colors whereas large changes are indicated
-by the color red. For the nllh, AIC, and BIC the values should be as
-low as possible. That's why all decreases are marked green and all
-increases red.
+will be indicated by a green color whereas large changes are indicated
+in red. For the nllh, AIC, and BIC the values should be as low as
+possible. That's why all decreases are marked green and all increases
+red.
 
-To better review the influence of the individual parameter changes not
+To better review the influence of the individual parameter changes, not
 just the current results and statistics but also the ones from the
-three last fits (in the *hist_1*, *hist_2* and *hist_3* column) are
+three last fits (in the *hist_1*, *hist_2*, and *hist_3* column) are
 contained in the table.
 
 ### *Time series* box
@@ -261,14 +307,14 @@ the function specified in the *Deseasonalization method* drop-down
 menu of the **Options** box to it. Both plots contain the extracted
 extreme events as additional orange points and are generated using the
 [dygraphs](https://CRAN.R-project.org/package=dygraphs)
-library. That's why you are also able so zoom into specific regions
-using your mouse.
+library. That's why you are also able to zoom into them using your
+mouse!
 
-The *Remaining* tab contains all the events in your time series which
-are extracted by the blocking or thresholding. Those can be considered
-as the extreme events of the series. Since it is sometimes quite
-interesting to see what will happen to your fitted parameters when
-discarding individual events (like the most extreme ones), you can
-toggle all the points by clicking them or brush them using your
-mouse. When deactivated they do not contribute to the fitting anymore
-and the optimization is being redone instantly.
+The *Remaining* tab contains all the events in your time series, which
+got extracted in the blocking or thresholding. Those can be considered
+the extreme events of the series. Since it is often quite interesting
+to see what will happen to your fitted parameters when discarding
+individual events (like the most extreme ones), you can toggle all the
+points by clicking them or brush them using your mouse. When
+deactivated they do not contribute to the fitting anymore and the
+optimization is being redone instantly.
