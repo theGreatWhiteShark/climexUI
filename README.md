@@ -1,4 +1,4 @@
-l# Features
+# Features
 ![leaflet map to handle a lot of station data](res/climex_map.jpeg)
 ![control all the different steps involved in the extreme value analysis](res/climex_time-series.png)
 ![explore the station data with your mobile device](res/climex_mobile.jpeg)
